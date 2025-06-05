@@ -1,0 +1,37 @@
+# Development Timeline
+
+## Week 1: Setup & User Management
+- [x] Django project initialized
+- [x] PostgreSQL/SQLite configured
+- [ ] Auth system implemented
+- [ ] Basic user dashboard created
+- [ ] Wardrobe model & upload form added
+- [ ] Pillow image processing implemented
+
+## Week 2: Gemini Integration
+- [ ] Gemini Vision integrated with upload
+- [ ] AI tagging via Celery tasks
+- [ ] Prompt engineering for tagging
+- [ ] Text-based outfit suggestions with Gemini
+
+## Week 3: UI Polish & Background Tasks
+- [ ] TailwindCSS/Bootstrap integrated
+- [ ] Image gallery improvements
+- [x] Celery + Redis fully integrated
+- [ ] All Gemini calls done in background
+
+## Week 4: Styling & E-commerce (Phase 2)
+- [ ] User profile customization
+- [ ] Body type analysis implemented
+- [ ] Enhanced prompts for personal recommendations
+
+## Week 5: Complementary Items & Feedback
+- [ ] Gap detection in outfit suggestions
+- [ ] E-commerce links added
+- [ ] Like/Dislike feature for feedback
+
+## Week 6: Deployment & Polish
+- [ ] Production deployment to cloud
+- [ ] Gunicorn/Nginx configured
+- [ ] Environment variables secured
+- [ ] Final bug fixes and UI tweaks
