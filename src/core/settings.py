@@ -170,3 +170,19 @@ else:
 MEDIA_LOCATION = 'media'
 MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/{MEDIA_LOCATION}/'
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+# Authentication settings
+LOGIN_REDIRECT_URL = 'app:index'
+LOGIN_URL = 'login'
+LOGOUT_REDIRECT_URL = 'app:index'
+
+# Email settings for password reset
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+
+LOGIN_REDIRECT_URL = "app:dashboard"
+LOGOUT_REDIRECT_URL = "app:index"

@@ -1,0 +1,65 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}Blog - Wardrobe Planner{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-5">Fashion & Style Blog</h1>
+    
+    <!-- Featured Post -->
+    <div class="card mb-5">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="{% static 'app/images/blog/featured-post.jpg' %}" class="img-fluid rounded-start" alt="Featured Post">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <span class="badge bg-primary mb-2">Featured</span>
+                    <h2 class="card-title h3">10 Essential Tips for a Minimalist Wardrobe</h2>
+                    <p class="card-text">Learn how to build a versatile wardrobe with fewer pieces while maximizing your outfit options.</p>
+                    <p class="card-text"><small class="text-muted">Published 3 days ago</small></p>
+                    <a href="#" class="btn btn-outline-primary">Read More</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Blog Posts Grid -->
+    <div class="row g-4">
+        <!-- Sample blog posts - Replace with dynamic content later -->
+        <div class="col-md-4">
+            <div class="card h-100">
+                <img src="{% static 'app/images/blog/post-1.jpg' %}" class="card-img-top" alt="Blog Post">
+                <div class="card-body">
+                    <h3 class="card-title h5">Seasonal Wardrobe Transition Tips</h3>
+                    <p class="card-text">How to effectively transition your wardrobe between seasons without breaking the bank.</p>
+                    <a href="#" class="btn btn-link px-0">Read More →</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100">
+                <img src="{% static 'app/images/blog/post-2.jpg' %}" class="card-img-top" alt="Blog Post">
+                <div class="card-body">
+                    <h3 class="card-title h5">Sustainable Fashion Guide</h3>
+                    <p class="card-text">Discover how to make more sustainable choices with your wardrobe.</p>
+                    <a href="#" class="btn btn-link px-0">Read More →</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100">
+                <img src="{% static 'app/images/blog/post-3.jpg' %}" class="card-img-top" alt="Blog Post">
+                <div class="card-body">
+                    <h3 class="card-title h5">Color Coordination Made Easy</h3>
+                    <p class="card-text">Learn the basics of color theory to create perfectly coordinated outfits.</p>
+                    <a href="#" class="btn btn-link px-0">Read More →</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,147 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %}Wardrobe Planner{% endblock %}</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{% static 'app/images/favicon.ico' %}">
+    
+    <!-- CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    {% block extra_css %}{% endblock %}
+    <link href="{% static 'app/css/style.css' %}" rel="stylesheet">
+
+    <!-- Meta tags -->
+    <meta name="description" content="{% block meta_description %}Wardrobe Planner - Organize your wardrobe efficiently{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}wardrobe, planner, organization, clothes, fashion{% endblock %}">
+    
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="{% block og_title %}Wardrobe Planner{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Organize your wardrobe efficiently{% endblock %}">
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    
+    <!-- CSRF Token -->
+    {% csrf_token %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+    <!-- Header -->
+    <header class="main-header">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container">
+                <a class="navbar-brand" href="{% url 'app:index' %}">
+                    <img src="{% static 'app/images/logo.png' %}" alt="Wardrobe Planner Logo" height="30">
+                    Wardrobe Planner
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarMain">
+                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                        {% block navigation %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}" 
+                               href="{% url 'app:index' %}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'blog' %}active{% endif %}" 
+                               href="{% url 'app:blog' %}">Blog</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}" 
+                               href="{% url 'app:about' %}">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}" 
+                               href="{% url 'app:contact' %}">Contact Us</a>
+                        </li>
+                        {% endblock %}
+                    </ul>
+                    
+                    <div class="navbar-nav align-items-center">
+                        {% if user.is_authenticated %}
+                            <form method="post" action="{% url 'logout' %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="nav-link me-3 btn btn-link">Sign out</button>
+                            </form>
+                            <a class="btn btn-primary" href="{% url 'app:dashboard' %}">Enter App</a>
+                        {% else %}
+                            <a class="nav-link me-3" href="{% url 'login' %}">Login</a>
+                            <a class="btn btn-primary" href="{% url 'register' %}">Register</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container mt-4">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto py-3 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>About Us</h5>
+                    <p>Wardrobe Planner helps you organize your clothes and create perfect outfits.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'app:about' %}">About</a></li>
+                        <li><a href="{% url 'app:contact' %}">Contact</a></li>
+                        <li><a href="{% url 'app:privacy' %}">Privacy Policy</a></li>
+                        <li><a href="{% url 'app:terms' %}">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Connect With Us</h5>
+                    <div class="social-links">
+                        <a href="#" class="me-2"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="me-2"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="me-2"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="me-2"><i class="fab fa-pinterest"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <p>&copy; {% now "Y" %} Wardrobe Planner. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    {% block extra_js %}{% endblock %}
+    <script src="{% static 'app/js/main.js' %}"></script>
+
+    <!-- Page-specific scripts -->
+    {% block page_scripts %}{% endblock %}
+</body>
+</html>
+
