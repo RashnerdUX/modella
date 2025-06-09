@@ -1,4 +1,4 @@
-{% extends 'app/base.html' %}
+{% extends 'app/dashboardbase.html' %}
 {% load static %}
 
 {% block title %}Dashboard - Wardrobe Planner{% endblock %}
@@ -22,7 +22,7 @@
             <div class="card h-100">
                 <div class="card-body">
                     <h5 class="card-title">Total Items</h5>
-                    <h2 class="mb-0">0</h2>
+                    <h2 class="mb-0">{{ total_items}}</h2>
                     <small class="text-muted">Items in your wardrobe</small>
                 </div>
             </div>
@@ -31,7 +31,7 @@
             <div class="card h-100">
                 <div class="card-body">
                     <h5 class="card-title">Outfits</h5>
-                    <h2 class="mb-0">0</h2>
+                    <h2 class="mb-0">{{total_outfits}}</h2>
                     <small class="text-muted">Created outfits</small>
                 </div>
             </div>
@@ -40,7 +40,7 @@
             <div class="card h-100">
                 <div class="card-body">
                     <h5 class="card-title">Categories</h5>
-                    <h2 class="mb-0">0</h2>
+                    <h2 class="mb-0">{{total_categories}}</h2>
                     <small class="text-muted">Different categories</small>
                 </div>
             </div>
@@ -49,7 +49,7 @@
             <div class="card h-100">
                 <div class="card-body">
                     <h5 class="card-title">Favorites</h5>
-                    <h2 class="mb-0">0</h2>
+                    <h2 class="mb-0">{{total_favorites}}</h2>
                     <small class="text-muted">Favorite items</small>
                 </div>
             </div>
@@ -62,7 +62,7 @@
             <h2 class="h4 mb-4">Quick Actions</h2>
             <div class="row g-4">
                 <div class="col-md-3">
-                    <a href="#" class="card text-decoration-none h-100">
+                    <a href="{% url 'app:wardrobe_list' %}" class="card text-decoration-none h-100">
                         <div class="card-body text-center">
                             <i class="fas fa-tshirt fa-2x mb-3 text-primary"></i>
                             <h5 class="card-title">View Wardrobe</h5>
