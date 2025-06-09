@@ -5,7 +5,7 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormView
 from django.urls import reverse_lazy
 from django.contrib import messages
-from .forms import UserRegistrationForm
+from .forms import UserRegistrationForm, WardrobeItemForm
 
 def register(request):
     if request.method == "POST":
@@ -48,3 +48,19 @@ def privacypolicy(request):
 
 def terms(request):
     pass
+
+@login_required
+def add_wardrobe_item(request):
+    """Add a new wardrobe item."""
+    if request.method == 'POST':
+        form = WardrobeItemForm(request.POST, request.FILES, user=request.user)
+        if form.is_valid():
+            item = form.save()
+            if getattr(item, '_is_blurry', False):
+                messages.warning(request, "The uploaded image appears to be blurry. Consider uploading a clearer photo.")
+            messages.success(request, f'"{item.name}" has been added to your wardrobe!')
+            return redirect('app:dashboard')
+    else:
+        form = WardrobeItemForm(user=request.user)
+    
+    return render(request, 'app/wardrobe_item_form.html', {'form': form})

@@ -3,8 +3,8 @@
 ## Week 1: Setup & User Management
 - [x] Django project initialized
 - [x] PostgreSQL/SQLite configured
-- [ ] Auth system implemented
-- [ ] Basic user dashboard created
+- [x] Auth system implemented
+- [x] Basic user dashboard created
 - [ ] Wardrobe model & upload form added
 - [ ] Pillow image processing implemented
 

@@ -1,0 +1,142 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}Add New Item - Wardrobe Planner{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <h1 class="h3 mb-4 text-center">Add New Wardrobe Item</h1>
+
+                    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <div class="row g-3">
+                            <!-- Basic Information -->
+                            <div class="col-md-6">
+                                <label for="{{ form.name.id_for_label }}" class="form-label">Name*</label>
+                                {{ form.name }}
+                                {% if form.name.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.name.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="{{ form.category.id_for_label }}" class="form-label">Category*</label>
+                                {{ form.category }}
+                                {% if form.category.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.category.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="{{ form.color.id_for_label }}" class="form-label">Color*</label>
+                                {{ form.color }}
+                                {% if form.color.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.color.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="{{ form.season.id_for_label }}" class="form-label">Season</label>
+                                {{ form.season }}
+                                {% if form.season.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.season.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="{{ form.brand.id_for_label }}" class="form-label">Brand</label>
+                                {{ form.brand }}
+                                {% if form.brand.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.brand.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="{{ form.material.id_for_label }}" class="form-label">Material</label>
+                                {{ form.material }}
+                                {% if form.material.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.material.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-12">
+                                <label for="{{ form.image.id_for_label }}" class="form-label">Image*</label>
+                                {{ form.image }}
+                                {% if form.image.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.image.errors.0 }}</div>
+                                {% endif %}
+                                <div id="imagePreview"></div>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="{{ form.notes.id_for_label }}" class="form-label">Notes</label>
+                                {{ form.notes }}
+                                {% if form.notes.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.notes.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Status Toggle -->
+                            <div class="col-12">
+                                <div class="card mt-3">
+                                    <div class="card-body">
+                                        <div class="form-check">
+                                            {{ form.is_favorite }}
+                                            <label class="form-check-label" for="{{ form.is_favorite.id_for_label }}">
+                                                <i class="fas fa-heart me-2 text-danger"></i>Mark as Favorite
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a href="{% url 'app:dashboard' %}" class="btn btn-outline-secondary me-md-2">Cancel</a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Save Item
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Preview image before upload
+    document.getElementById('{{ form.image.id_for_label }}').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.createElement('img');
+                preview.src = e.target.result;
+                preview.className = 'img-thumbnail mt-2';
+                preview.style.maxHeight = '200px';
+                
+                const container = document.getElementById('imagePreview');
+                container.innerHTML = '';
+                container.appendChild(preview);
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %} 

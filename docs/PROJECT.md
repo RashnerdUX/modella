@@ -11,3 +11,7 @@
 1. **Phase 1:** Wardrobe upload and text-based outfit suggestions.
 2. **Phase 2:** Body type analysis, style preferences, and e-commerce recommendations.
 3. **Phase 3:** Image generation, wardrobe photo parsing, and community features.
+
+# Extra Notes
+## Information Source
+1. Take note. The categories for the warddrobe items are drawn from this link [Garment Types](https://modaknits.com/garment-types-overview-of-garment-styles-and-categories/)
