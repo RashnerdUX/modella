@@ -21,12 +21,17 @@ def test_s3_connection():
     try:
         response = s3.list_objects_v2(Bucket=bucket_name)
         print("✅ S3 bucket is connected successfully!")
+        print("Here are the contents of the bucket:")
         if 'Contents' in response:
             for obj in response['Contents']:
                 print(f"- {obj['Key']}")
+            print("\n")
         else:
             print("Bucket is empty.")
     except Exception as e:
         print(f"❌ Failed to connect to S3: {e}")
         return False
     return True
+
+if __name__ == '__main__':
+    test_s3_connection()

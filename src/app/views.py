@@ -6,6 +6,12 @@ from django.views.generic.edit import FormView
 from django.urls import reverse_lazy
 from django.contrib import messages
 from .forms import UserRegistrationForm, WardrobeItemForm
+from .models import WardrobeItem
+from django.db.models import Q
+
+#for debugging
+from django.conf import settings
+from django.core.files.storage import default_storage
 
 def register(request):
     if request.method == "POST":
@@ -41,7 +47,15 @@ def contact(request):
 @login_required
 def dashboard(request):
     """User dashboard view."""
-    return render(request, 'app/dashboard.html')
+    # Get wardrobe stats for the user
+    wardrobe_items = WardrobeItem.objects.filter(owner=request.user)
+    context = {
+        'total_items': wardrobe_items.count(),
+        'total_outfits': 0,  # Placeholder until Outfit model is implemented
+        'total_categories': wardrobe_items.values('category').distinct().count(),
+        'total_favorites': wardrobe_items.filter(is_favorite=True).count()
+    }
+    return render(request, 'app/dashboard.html', context)
 
 def privacypolicy(request):
     pass
@@ -55,6 +69,8 @@ def add_wardrobe_item(request):
     if request.method == 'POST':
         form = WardrobeItemForm(request.POST, request.FILES, user=request.user)
         if form.is_valid():
+            print(f"VIEW: settings.DEFAULT_FILE_STORAGE is: {settings.DEFAULT_FILE_STORAGE}")
+            print(f"VIEW: default_storage object is: {default_storage}")
             item = form.save()
             if getattr(item, '_is_blurry', False):
                 messages.warning(request, "The uploaded image appears to be blurry. Consider uploading a clearer photo.")
@@ -64,3 +80,34 @@ def add_wardrobe_item(request):
         form = WardrobeItemForm(user=request.user)
     
     return render(request, 'app/wardrobe_item_form.html', {'form': form})
+
+@login_required
+def wardrobe_list(request):
+    """Display the user's wardrobe items with filtering."""
+    items = WardrobeItem.objects.filter(owner=request.user)
+    category_choices = WardrobeItem._meta.get_field('category').choices
+    season_choices = WardrobeItem._meta.get_field('season').choices
+
+    # Filtering
+    category = request.GET.get('category')
+    season = request.GET.get('season')
+    brand = request.GET.get('brand')
+    material = request.GET.get('material')
+    style_tag = request.GET.get('style_tag')
+
+    if category:
+        items = items.filter(category=category)
+    if season:
+        items = items.filter(season=season)
+    if brand:
+        items = items.filter(brand__icontains=brand)
+    if material:
+        items = items.filter(material__icontains=material)
+    if style_tag:
+        items = items.filter(style_tags__icontains=style_tag)
+
+    return render(request, 'app/wardrobe_list.html', {
+        'items': items,
+        'category_choices': category_choices,
+        'season_choices': season_choices,
+    })

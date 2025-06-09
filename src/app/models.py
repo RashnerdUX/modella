@@ -1,5 +1,11 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from PIL import Image
+from io import BytesIO
+from django.core.files.base import ContentFile
+from PIL.ExifTags import TAGS as ExifTags
+import numpy as np
+from storages.backends.s3boto3 import S3Boto3Storage
 
 User = get_user_model()
 
@@ -21,7 +27,7 @@ class WardrobeItem(models.Model):
         ]
     )
     color = models.CharField(max_length=30, help_text="E.g. Red, Black, Navy Blue")
-    image = models.ImageField(upload_to='wardrobe/')
+    image = models.ImageField(upload_to='wardrobe/', storage=S3Boto3Storage())
     season = models.CharField(
         max_length=20,
         choices=[
@@ -50,6 +56,7 @@ class WardrobeItem(models.Model):
         # Only process if a new image is uploaded
         if self.image and hasattr(self.image, 'file'):
             img = Image.open(self.image)
+            print(f"Image storage backend: {self.image.storage.__class__.__name__}")
             
             # --- EXIF Orientation ---
             try:

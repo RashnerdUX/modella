@@ -11,6 +11,8 @@ redis = "*"
 django-storages = "*"
 python-dotenv = "*"
 boto3 = "*"
+google-genai = "*"
+pydantic = "*"
 
 [dev-packages]
 

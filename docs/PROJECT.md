@@ -14,4 +14,4 @@
 
 # Extra Notes
 ## Information Source
-1. Take note. The categories for the warddrobe items are drawn from this link [Garment Types](https://modaknits.com/garment-types-overview-of-garment-styles-and-categories/)
+1. Take note. The categories for the warddrobe items are drawn from this link - [Garment Types](https://modaknits.com/garment-types-overview-of-garment-styles-and-categories/)

@@ -140,7 +140,7 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = TIME_ZONE
 
-USE_S3 = os.getenv('USE_S3') == 'TRUE'
+USE_S3 = os.getenv('USE_S3', 'False') == "True"
 
 #Set the bucket name
 AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
@@ -160,16 +160,21 @@ if USE_S3:
     STATIC_LOCATION = 'static'
     STATIC_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/{STATIC_LOCATION}/'
     STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+    # S3 Media settings
+    MEDIA_LOCATION = 'media'
+    MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/{MEDIA_LOCATION}/'
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
 else:
     # Local static files if S3 is not used
     STATIC_URL = '/static/'
     STATICFILES_DIRS = [BASE_DIR / 'static']
     STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# S3 Media settings
-MEDIA_LOCATION = 'media'
-MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/{MEDIA_LOCATION}/'
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    # Local media files if S3 is not used
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = BASE_DIR / 'media'
 
 # Authentication settings
 LOGIN_REDIRECT_URL = 'app:index'
@@ -183,6 +188,3 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-
-LOGIN_REDIRECT_URL = "app:dashboard"
-LOGOUT_REDIRECT_URL = "app:index"

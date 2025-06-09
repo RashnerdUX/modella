@@ -1,0 +1,101 @@
+{% extends 'app/dashboardbase.html' %}
+{% load static %}
+
+{% block title %}My Wardrobe - Wardrobe Planner{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Filter Sidebar -->
+        <div class="col-lg-3 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Filter Items</h5>
+                    <form method="get" class="row g-3">
+                        <div class="col-12">
+                            <label for="category" class="form-label">Category</label>
+                            <select name="category" id="category" class="form-select">
+                                <option value="">All</option>
+                                {% for value, label in category_choices %}
+                                    <option value="{{ value }}" {% if request.GET.category == value %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label for="season" class="form-label">Season</label>
+                            <select name="season" id="season" class="form-select">
+                                <option value="">All</option>
+                                {% for value, label in season_choices %}
+                                    <option value="{{ value }}" {% if request.GET.season == value %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label for="brand" class="form-label">Brand</label>
+                            <input type="text" name="brand" id="brand" class="form-control" value="{{ request.GET.brand }}">
+                        </div>
+                        <div class="col-12">
+                            <label for="material" class="form-label">Material</label>
+                            <input type="text" name="material" id="material" class="form-control" value="{{ request.GET.material }}">
+                        </div>
+                        <div class="col-12">
+                            <label for="style_tag" class="form-label">Style Tag</label>
+                            <input type="text" name="style_tag" id="style_tag" class="form-control" value="{{ request.GET.style_tag }}" placeholder="E.g. casual, formal">
+                        </div>
+                        <div class="col-12 d-grid gap-2 mt-2">
+                            <button type="submit" class="btn btn-primary">Apply Filters</button>
+                            <a href="{% url 'app:wardrobe_list' %}" class="btn btn-outline-secondary">Clear</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Wardrobe Items Grid -->
+        <div class="col-lg-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="h4 mb-0">My Wardrobe</h2>
+                <a href="{% url 'app:add_wardrobe_item' %}" class="btn btn-success">
+                    <i class="fas fa-plus me-2"></i>Add New Item
+                </a>
+            </div>
+            {% if items %}
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                    {% for item in items %}
+                        <div class="col">
+                            <div class="card h-100 shadow-sm">
+                                <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.name }}" style="object-fit:cover; height:220px;">
+                                <div class="card-body">
+                                    <h5 class="card-title mb-1">{{ item.name }}</h5>
+                                    <span class="badge bg-secondary mb-2">{{ item.get_category_display }}</span>
+                                    <p class="mb-1"><strong>Brand:</strong> {{ item.brand|default:'—' }}</p>
+                                    <p class="mb-1"><strong>Material:</strong> {{ item.material|default:'—' }}</p>
+                                    <p class="mb-1"><strong>Season:</strong> {{ item.get_season_display }}</p>
+                                    {% if item.style_tags %}
+                                        <div class="mb-1">
+                                            <strong>Tags:</strong>
+                                            {% for tag in item.style_tags %}
+                                                <span class="badge bg-info text-dark">{{ tag }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="card-footer bg-white border-0 d-flex justify-content-between align-items-center">
+                                    {% if item.is_favorite %}
+                                        <span class="text-danger"><i class="fas fa-heart"></i> Favorite</span>
+                                    {% endif %}
+                                    <a href="#" class="btn btn-outline-primary btn-sm">View</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info text-center">
+                    <i class="fas fa-tshirt fa-2x mb-2"></i><br>
+                    No wardrobe items found. <a href="{% url 'app:add_wardrobe_item' %}">Add your first item!</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

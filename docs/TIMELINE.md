@@ -5,8 +5,8 @@
 - [x] PostgreSQL/SQLite configured
 - [x] Auth system implemented
 - [x] Basic user dashboard created
-- [ ] Wardrobe model & upload form added
-- [ ] Pillow image processing implemented
+- [x] Wardrobe model & upload form added
+- [x] Pillow image processing implemented
 
 ## Week 2: Gemini Integration
 - [ ] Gemini Vision integrated with upload
