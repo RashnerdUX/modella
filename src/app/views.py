@@ -1,17 +1,19 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormView
 from django.urls import reverse_lazy
 from django.contrib import messages
-from .forms import UserRegistrationForm, WardrobeItemForm
-from .models import WardrobeItem
+from .forms import UserRegistrationForm, WardrobeItemForm, OutfitForm
+from .models import WardrobeItem, Outfit, Recommendation
 from django.db.models import Q
+import json
 
 #for debugging
 from django.conf import settings
 from django.core.files.storage import default_storage
+from .helpers import get_outfit_recommendation
 
 def register(request):
     if request.method == "POST":
@@ -111,3 +113,82 @@ def wardrobe_list(request):
         'category_choices': category_choices,
         'season_choices': season_choices,
     })
+
+@login_required
+def create_outfit(request):
+    if request.method == 'POST':
+        form = OutfitForm(request.POST)
+        form.fields['items'].queryset = WardrobeItem.objects.filter(owner=request.user)
+        if form.is_valid():
+            # Get selected items and occasion
+            items = form.cleaned_data['items']
+            occasion = form.cleaned_data['occasion']
+            
+            # Prepare data for Gemini
+            item_data = [{
+                'id': item.id,
+                'item_name': item.item_name,      
+                'category': item.category,            
+                'color': item.color,                  
+                'pattern': item.pattern,              
+                'material': item.material,           
+                'season': item.season,                
+                'style_tags': item.style_tags,        
+                'brand': item.brand,              
+                'occasions': item.occasions,          
+                'layer': item.layer,                  
+            } for item in items]
+            
+            # Get recommendation from Gemini
+            gemini_text = get_outfit_recommendation(item_data, occasion)
+            
+            # Save Recommendation
+            recommendation = Recommendation.objects.create(
+                user=request.user,
+                text=gemini_text,
+                occasion=occasion
+            )
+            recommendation.items.set(items)
+            recommendation.save()
+            
+            return redirect('app:recommendation_result', recommendation_id=recommendation.id)
+    else:
+        form = OutfitForm()
+        form.fields['items'].queryset = WardrobeItem.objects.filter(owner=request.user)
+    return render(request, 'app/create_outfit.html', {'form': form})
+
+@login_required
+def outfit_result(request, outfit_id=None, recommendation_id=None):
+    # If POST, save the recommended outfit
+    if request.method == 'POST' and recommendation_id:
+        recommendation = get_object_or_404(Recommendation, id=recommendation_id, user=request.user)
+        outfit = Outfit.objects.create(
+            user=request.user,
+            name=f"Outfit for {recommendation.occasion or 'Occasion'}",
+            occasion=recommendation.occasion,
+            season='all',  # You can improve this by letting user pick
+            is_ai_generated=True
+        )
+        outfit.items.set(recommendation.items.all())
+        outfit.save()
+        messages.success(request, 'Outfit saved!')
+        return redirect('app:outfit_result', outfit_id=outfit.id)
+    
+    # If GET with outfit_id, show the saved outfit
+    if outfit_id:
+        outfit = get_object_or_404(Outfit, id=outfit_id, user=request.user)
+        return render(request, 'app/outfit_result.html', {'outfit': outfit, 'is_recommendation': False})
+    
+    # If GET with recommendation_id, show the recommendation
+    if recommendation_id:
+        recommendation = get_object_or_404(Recommendation, id=recommendation_id, user=request.user)
+        wardrobe_items = recommendation.items.all()
+        return render(request, 'app/outfit_result.html', {
+            'recommendation': recommendation,
+            'wardrobe_items': wardrobe_items,
+            'is_recommendation': True
+        })
+    
+    # Otherwise, show error
+    messages.error(request, 'No recommendation to show.')
+    return redirect('app:create_outfit')

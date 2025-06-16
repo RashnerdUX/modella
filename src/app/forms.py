@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import WardrobeItem
+from .models import WardrobeItem, Outfit
 
 class UserRegistrationForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -16,6 +16,17 @@ class UserRegistrationForm(UserCreationForm):
         if commit:
             user.save()
         return user
+    
+class OutfitForm(forms.ModelForm):
+    class Meta:
+        model = Outfit
+        fields = ['name', 'items', 'occasion', 'season']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'E.g. Casual Summer Look'}),
+            'items': forms.SelectMultiple(attrs={'class': 'form-select', 'size': 10}),
+            'occasion': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'E.g. Wedding, Work, Party'}),
+            'season': forms.Select(attrs={'class': 'form-select'}),
+        } 
 
 class WardrobeItemForm(forms.ModelForm):
     class Meta:
@@ -73,3 +84,4 @@ class WardrobeItemForm(forms.ModelForm):
         if user:
             #Saves the user to the instance as the owner of item
             self.instance.owner = user 
+

@@ -41,7 +41,7 @@ def process_wardrobe_image(wardrobe_item_id):
         }
     )
     # Parse the JSON response
-    gemini_data = response.json()
+    gemini_data = response.text
 
     # Update the WardrobeItem with non-null data from Gemini
     for field, value in gemini_data.items():

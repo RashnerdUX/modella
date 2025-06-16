@@ -1,0 +1,52 @@
+{% extends 'app/dashboardbase.html' %}
+{% load static %}
+
+{% block title %}Create Outfit - Wardrobe Planner{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <h1 class="h3 mb-4 text-center">Create New Outfit</h1>
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                        <div class="mb-3">
+                            <label for="{{ form.name.id_for_label }}" class="form-label">Outfit Name*</label>
+                            {{ form.name }}
+                            {% if form.name.errors %}<div class="invalid-feedback d-block">{{ form.name.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.items.id_for_label }}" class="form-label">Select Wardrobe Items*</label>
+                            {{ form.items }}
+                            {% if form.items.errors %}<div class="invalid-feedback d-block">{{ form.items.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.occasion.id_for_label }}" class="form-label">Occasion</label>
+                            {{ form.occasion }}
+                            {% if form.occasion.errors %}<div class="invalid-feedback d-block">{{ form.occasion.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.season.id_for_label }}" class="form-label">Season</label>
+                            {{ form.season }}
+                            {% if form.season.errors %}<div class="invalid-feedback d-block">{{ form.season.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a href="{% url 'app:dashboard' %}" class="btn btn-outline-secondary me-md-2">Cancel</a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-check me-2"></i>Create Outfit
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

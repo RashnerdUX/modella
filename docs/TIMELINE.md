@@ -9,10 +9,10 @@
 - [x] Pillow image processing implemented
 
 ## Week 2: Gemini Integration
-- [ ] Gemini Vision integrated with upload
-- [ ] AI tagging via Celery tasks
-- [ ] Prompt engineering for tagging
-- [ ] Text-based outfit suggestions with Gemini
+- [x] Gemini Vision integrated with upload
+- [x] AI tagging via Celery tasks
+- [x] Prompt engineering for tagging
+- [x] Text-based outfit suggestions with Gemini
 
 ## Week 3: UI Polish & Background Tasks
 - [ ] TailwindCSS/Bootstrap integrated

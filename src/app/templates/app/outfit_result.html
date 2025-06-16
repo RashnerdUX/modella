@@ -1,0 +1,89 @@
+{% extends 'app/dashboardbase.html' %}
+{% load static %}
+
+{% block title %}Outfit Recommendation - Wardrobe Planner{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    {% if is_recommendation %}
+        <div class="row mb-4">
+            <div class="col">
+                <h1 class="mb-0">Recommended Outfit</h1>
+                <p class="text-muted">Occasion: {{ recommendation.occasion|default:'—' }}</p>
+                <div class="alert alert-info mt-3">{{ recommendation.text }}</div>
+            </div>
+        </div>
+        <form method="post">
+            {% csrf_token %}
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                {% for item in wardrobe_items %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.name }}" style="object-fit:cover; height:220px;">
+                        <div class="card-body">
+                            <h5 class="card-title mb-1">{{ item.name }}</h5>
+                            <span class="badge bg-secondary mb-2">{{ item.get_category_display }}</span>
+                            <p class="mb-1"><strong>Color:</strong> {{ item.color }}</p>
+                            <p class="mb-1"><strong>Brand:</strong> {{ item.brand|default:'—' }}</p>
+                            <p class="mb-1"><strong>Material:</strong> {{ item.material|default:'—' }}</p>
+                            <p class="mb-1"><strong>Season:</strong> {{ item.get_season_display }}</p>
+                            {% if item.style_tags %}
+                                <div class="mb-1">
+                                    <strong>Tags:</strong>
+                                    {% for tag in item.style_tags %}
+                                        <span class="badge bg-info text-dark">{{ tag }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                <a href="{% url 'app:create_outfit' %}" class="btn btn-outline-secondary me-md-2">Try Again</a>
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-check me-2"></i>Accept & Save Outfit
+                </button>
+            </div>
+        </form>
+    {% else %}
+        <div class="row mb-4">
+            <div class="col">
+                <h1 class="mb-0">{{ outfit.name }}</h1>
+                <p class="text-muted">Occasion: {{ outfit.occasion|default:'—' }} | Season: {{ outfit.get_season_display }}</p>
+            </div>
+            <div class="col-auto">
+                <a href="{% url 'app:create_outfit' %}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Create Another Outfit
+                </a>
+            </div>
+        </div>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for item in outfit.items.all %}
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.name }}" style="object-fit:cover; height:220px;">
+                    <div class="card-body">
+                        <h5 class="card-title mb-1">{{ item.name }}</h5>
+                        <span class="badge bg-secondary mb-2">{{ item.get_category_display }}</span>
+                        <p class="mb-1"><strong>Color:</strong> {{ item.color }}</p>
+                        <p class="mb-1"><strong>Brand:</strong> {{ item.brand|default:'—' }}</p>
+                        <p class="mb-1"><strong>Material:</strong> {{ item.material|default:'—' }}</p>
+                        <p class="mb-1"><strong>Season:</strong> {{ item.get_season_display }}</p>
+                        {% if item.style_tags %}
+                            <div class="mb-1">
+                                <strong>Tags:</strong>
+                                {% for tag in item.style_tags %}
+                                    <span class="badge bg-info text-dark">{{ tag }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %} 

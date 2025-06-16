@@ -39,8 +39,23 @@ class WardrobeItem(models.Model):
         ],
         default='all'
     )
+    #This is the item name determined by Gemini
+    item_name = models.CharField(max_length=100, blank=True, null=True)
+    layer = models.CharField(
+        max_length=20,
+        choices=[
+            ('base', 'Base Layer'),
+            ('mid', 'Mid Layer'),
+            ('outer', 'Outer Layer'),
+        ],
+        blank=True,
+        null=True,
+        help_text="Used to build layer-aware outfits"
+    )
     style_tags = models.JSONField(blank=True, null=True, help_text="AI-generated tags like 'casual', 'formal', etc.")
     brand = models.CharField(max_length=50, blank=True, null=True)
+    occasions = models.JSONField(blank=True, null=True, help_text="E.g. ['wedding', 'office', 'casual weekend']")
+    pattern = models.CharField(max_length=50, blank=True, null=True, help_text="E.g. striped, plain, floral")
     material = models.CharField(max_length=50, blank=True, null=True)
     linked_products = models.JSONField(blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
@@ -113,3 +128,13 @@ class Outfit(models.Model):
 
     def __str__(self):
         return self.name or f"Outfit {self.id}"
+
+class Recommendation(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    items = models.ManyToManyField(WardrobeItem)
+    text = models.TextField()  # Gemini's outfit suggestion
+    occasion = models.CharField(max_length=100, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Recommendation for {self.user.username} on {self.created_at.strftime('%Y-%m-%d')}"
