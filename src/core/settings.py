@@ -44,9 +44,16 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'storages',  # for AWS S3
     'app',  # our main application
+    'tailwind', # for Tailwind 
+    'theme',
 ]
+if DEBUG:
+    # Add django_browser_reload only in DEBUG mode
+    # This allows the page to reload as I play around with Tailwind in real time
+    INSTALLED_APPS += ['django_browser_reload']
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -55,6 +62,12 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+if DEBUG:
+    # Add django_browser_reload middleware only in DEBUG mode
+    # This allows the page to reload as I play around with Tailwind in real time
+    MIDDLEWARE += [
+        "django_browser_reload.middleware.BrowserReloadMiddleware",
+    ]
 
 ROOT_URLCONF = 'core.urls'
 
@@ -205,3 +218,8 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+
+#Tailwind configuration
+NPM_BIN_PATH = 'C:/Program Files/nodejs/npm.cmd'
+#'C:/Users/User/AppData/Roaming/npm/node_modules/npm/bin'
+TAILWIND_APP_NAME = 'theme'

@@ -1,5 +1,5 @@
 import os
-import google.generativeai as genai
+import google as genai
 from .pydantic_models import GeminiOutfitRecommendation
 from typing import List, Dict, Any
 from django.conf import settings
