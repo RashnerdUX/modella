@@ -14,6 +14,7 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 import dj_database_url
+from decouple import config, Csv
 
 # Load environment variables
 load_dotenv()
@@ -31,7 +32,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', None)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', [])
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default="127.0.0.1, localhost", cast=Csv())
 
 
 # Application definition

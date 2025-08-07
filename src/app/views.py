@@ -12,7 +12,7 @@ import json
 
 #for debugging
 from django.conf import settings
-from django.modella.files.storage import default_storage
+from django.core.files.storage import default_storage
 from .helpers import get_outfit_recommendation
 
 def register(request):
