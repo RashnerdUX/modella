@@ -1,0 +1,39 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "src/modella/wsgi.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "15mb",
+        "runtime": "python3.12"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
+    },
+    {
+      "src": "/media/(.*)",
+      "dest": "/media/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "src/modella/wsgi.py"
+    }
+  ],
+  "env": {
+    "PYTHONPATH": "src",
+    "DJANGO_SETTINGS_MODULE": "modella.settings"
+  },
+  "functions": {
+    "src/modella/wsgi.py": {
+      "runtime": "python3.12",
+      "maxDuration": 30
+    }
+  },
+  "installCommand": "cd src && pip install -r requirements.txt",
+  "buildCommand": "cd src && python manage.py collectstatic --noinput"
+}
