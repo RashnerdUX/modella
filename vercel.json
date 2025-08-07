@@ -28,6 +28,5 @@
     "PYTHONPATH": "src",
     "DJANGO_SETTINGS_MODULE": "modella.settings"
   },
-  "installCommand": "cd src && pip install -r requirements.txt",
   "buildCommand": "cd src && python manage.py collectstatic --noinput"
 }
