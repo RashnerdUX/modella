@@ -222,3 +222,15 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 NPM_BIN_PATH = 'C:/Program Files/nodejs/npm.cmd'
 #'C:/Users/User/AppData/Roaming/npm/node_modules/npm/bin'
 TAILWIND_APP_NAME = 'theme'
+
+# CSRF Configuration
+CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default="http://127.0.0.1:8000,http://localhost:8000", cast=Csv())
+
+# Add CSRF cookie settings for production
+if not DEBUG:
+    CSRF_COOKIE_SECURE = True
+    CSRF_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
