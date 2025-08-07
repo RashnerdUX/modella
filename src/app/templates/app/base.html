@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{% block title %}Wardrobe Planner{% endblock %}</title>
+    <title>{% block title %}Modella{% endblock %}</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{% static 'app/images/favicon.ico' %}">
@@ -17,11 +17,11 @@
     <link href="{% static 'app/css/style.css' %}" rel="stylesheet">
 
     <!-- Meta tags -->
-    <meta name="description" content="{% block meta_description %}Wardrobe Planner - Organize your wardrobe efficiently{% endblock %}">
+    <meta name="description" content="{% block meta_description %}Modella - Fashion meets intuition{% endblock %}">
     <meta name="keywords" content="{% block meta_keywords %}wardrobe, planner, organization, clothes, fashion{% endblock %}">
     
     <!-- Open Graph tags -->
-    <meta property="og:title" content="{% block og_title %}Wardrobe Planner{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}Modella{% endblock %}">
     <meta property="og:description" content="{% block og_description %}Organize your wardrobe efficiently{% endblock %}">
     <meta property="og:type" content="{% block og_type %}website{% endblock %}">
     
@@ -34,8 +34,8 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container">
                 <a class="navbar-brand" href="{% url 'app:index' %}">
-                    <img src="{% static 'app/images/logo.png' %}" alt="Wardrobe Planner Logo" height="30">
-                    Wardrobe Planner
+                    <img src="{% static 'app/images/logo.png' %}" alt="Modella Logo" height="30">
+                    Modella
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
                     <span class="navbar-toggler-icon"></span>
@@ -106,7 +106,7 @@
             <div class="row">
                 <div class="col-md-4">
                     <h5>About Us</h5>
-                    <p>Wardrobe Planner helps you organize your clothes and create perfect outfits.</p>
+                    <p>Modella is your personal AI stylist.</p>
                 </div>
                 <div class="col-md-4">
                     <h5>Quick Links</h5>
@@ -129,7 +129,7 @@
             </div>
             <hr>
             <div class="text-center">
-                <p>&copy; {% now "Y" %} Wardrobe Planner. All rights reserved.</p>
+                <p>&copy; {% now "Y" %} Modella. All rights reserved.</p>
             </div>
         </div>
     </footer>

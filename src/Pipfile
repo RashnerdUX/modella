@@ -6,7 +6,6 @@ name = "pypi"
 [packages]
 django = "*"
 python-dotenv = "*"
-django-tailwind = {extras = ["reload"], version = "*"}
 pillow = "*"
 numpy = "*"
 google = "*"
@@ -22,6 +21,9 @@ google-genai = "*"
 google-generativeai = "*"
 gunicorn = "*"
 whitenoise = "*"
+dj-database-url = "*"
+python-decouple = "*"
+django-tailwind = {extras = ["reload"], version = "*"}
 
 [dev-packages]
 

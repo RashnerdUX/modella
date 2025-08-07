@@ -1,5 +1,5 @@
 from datetime import datetime
-from core.celery import app
+from modella.celery import app
 from celery import shared_task
 from .models import WardrobeItem
 from .pydantic_models import GeminiImageRequest

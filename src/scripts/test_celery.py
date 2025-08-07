@@ -10,11 +10,11 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 load_dotenv()
 
 # Setup Django
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'modella.settings')
 django.setup()
 
 # Import the Celery app and task
-from core.celery import app
+from modella.celery import app
 from app.tasks import test_connection
 
 def test_celery_connection():
