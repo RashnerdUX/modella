@@ -1,6 +1,24 @@
 from datetime import datetime
-from modella.celery import app
-from celery import shared_task
+try:
+    from modella.celery import app
+    from celery import shared_task
+    CELERY_AVAILABLE = True
+except ImportError:
+    # Celery not available (e.g., in serverless environment)
+    CELERY_AVAILABLE = False
+    # Create dummy decorators
+    def app_task(*args, **kwargs):
+        def decorator(func):
+            return func
+        return decorator
+    
+    def shared_task(func):
+        return func
+    
+    class app:
+        @staticmethod
+        def task(*args, **kwargs):
+            return app_task(*args, **kwargs)
 from .models import WardrobeItem
 from .pydantic_models import GeminiImageRequest
 import requests
