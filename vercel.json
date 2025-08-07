@@ -1,11 +1,11 @@
 {
   "version": 2,
-  "functions": {
-    "src/modella/wsgi.py": {
-      "runtime": "python3.12",
-      "maxDuration": 30
+  "builds": [
+    {
+      "src": "src/modella/wsgi.py",
+      "use": "@vercel/python"
     }
-  },
+  ],
   "routes": [
     {
       "src": "/static/(.*)",
