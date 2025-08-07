@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from PIL import Image
 from io import BytesIO
-from django.core.files.base import ContentFile
+from django.modella.files.base import ContentFile
 from PIL.ExifTags import TAGS as ExifTags
 import numpy as np
 from storages.backends.s3boto3 import S3Boto3Storage

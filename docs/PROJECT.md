@@ -2,7 +2,7 @@
 
 **Goal:** Build a fashion stylist web application that uses AI to analyze wardrobe photos and offer outfit suggestions, styling tips, and product links.
 
-## Core Gemini Features Utilized
+##  Gemini Features Utilized
 - **Image Understanding:** Analyze uploaded clothing items (type, color, pattern, style).
 - **Text Generation:** Provide outfit descriptions, style advice, and occasion-based suggestions.
 - **Image Generation:** (Future) Create AI-generated visuals of outfits.

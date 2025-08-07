@@ -22,6 +22,7 @@ google-genai = "*"
 google-generativeai = "*"
 gunicorn = "*"
 whitenoise = "*"
+dj-database-url = "*"
 
 [dev-packages]
 

@@ -1,4 +1,4 @@
-# Core Features
+# Modella Features
 
 ## Phase 1: Wardrobe Upload & Text Recommendations
 - User auth (register, login, reset password)
