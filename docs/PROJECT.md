@@ -2,6 +2,21 @@
 
 **Goal:** Build a fashion stylist web application that uses AI to analyze wardrobe photos and offer outfit suggestions, styling tips, and product links.
 
+## Architecture
+
+**Backend:** Django REST API with cookie-based JWT authentication
+- RESTful API endpoints for wardrobe, outfits, and recommendations
+- Custom cookie-based JWT authentication system for security
+- Celery + Redis for background AI processing tasks
+- PostgreSQL database with S3 media storage
+
+**Frontend:** React SPA with modern tooling
+- React Router v7 for client-side routing
+- TypeScript for type safety
+- Tailwind CSS for responsive styling
+- Cookie-based authentication flow with automatic refresh
+- Protected routes and centralized auth context
+
 ##  Gemini Features Utilized
 - **Image Understanding:** Analyze uploaded clothing items (type, color, pattern, style).
 - **Text Generation:** Provide outfit descriptions, style advice, and occasion-based suggestions.
