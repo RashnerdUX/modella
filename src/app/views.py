@@ -1,194 +1,163 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login
-from django.contrib.auth.decorators import login_required
-from django.views.generic import ListView, DetailView
-from django.views.generic.edit import FormView
-from django.urls import reverse_lazy
-from django.contrib import messages
-from .forms import UserRegistrationForm, WardrobeItemForm, OutfitForm
+from rest_framework import viewsets, permissions, status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.decorators import action, api_view, permission_classes
+from django.contrib.auth import authenticate
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.shortcuts import get_object_or_404
 from .models import WardrobeItem, Outfit, Recommendation
-from django.db.models import Q
-import json
-
-#for debugging
-from django.conf import settings
-from django.core.files.storage import default_storage
+from .serializers import (
+    UserSerializer,
+    WardrobeItemSerializer,
+    OutfitSerializer,
+    RecommendationSerializer,
+)
+from django.contrib.auth.models import User
 from .helpers import get_outfit_recommendation
 
-def register(request):
-    if request.method == "POST":
-        form = UserRegistrationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('app:index')
-    else:
-        form = UserRegistrationForm()
-    return render(request, 'registration/register.html', {'form': form})
 
-def index(request):
-    """Homepage view."""
-    return render(request, 'app/index.html')
+class IsOwner(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        owner = getattr(obj, 'owner', None) or getattr(obj, 'user', None)
+        return owner == request.user
 
-def about(request):
-    """About page view."""
-    return render(request, 'app/about.html')
 
-def blog(request):
-    """Blog listing page view."""
-    # You might want to add blog post model and use ListView later
-    return render(request, 'app/blog.html')
+class WardrobeItemViewSet(viewsets.ModelViewSet):
+    queryset = WardrobeItem.objects.all()
+    serializer_class = WardrobeItemSerializer
+    permission_classes = [permissions.IsAuthenticated, IsOwner]
 
-def contact(request):
-    """Contact page view."""
-    if request.method == 'POST':
-        # Add contact form processing logic here
-        messages.success(request, 'Thank you for your message! We will get back to you soon.')
-    return render(request, 'app/contact.html')
+    def get_queryset(self):
+        qs = WardrobeItem.objects.filter(owner=self.request.user).order_by('-date_added')
+        # Optional filtering params
+        category = self.request.query_params.get('category')
+        season = self.request.query_params.get('season')
+        if category:
+            qs = qs.filter(category=category)
+        if season:
+            qs = qs.filter(season=season)
+        return qs
 
-@login_required
-def dashboard(request):
-    """User dashboard view."""
-    # Get wardrobe stats for the user
-    wardrobe_items = WardrobeItem.objects.filter(owner=request.user)
-    context = {
-        'total_items': wardrobe_items.count(),
-        'total_outfits': 0,  # Placeholder until Outfit model is implemented
-        'total_categories': wardrobe_items.values('category').distinct().count(),
-        'total_favorites': wardrobe_items.filter(is_favorite=True).count()
-    }
-    return render(request, 'app/dashboard.html', context)
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
-def privacypolicy(request):
-    pass
 
-def terms(request):
-    pass
+class OutfitViewSet(viewsets.ModelViewSet):
+    queryset = Outfit.objects.all()
+    serializer_class = OutfitSerializer
+    permission_classes = [permissions.IsAuthenticated, IsOwner]
 
-@login_required
-def add_wardrobe_item(request):
-    """Add a new wardrobe item."""
-    if request.method == 'POST':
-        form = WardrobeItemForm(request.POST, request.FILES, user=request.user)
-        if form.is_valid():
-            print(f"VIEW: settings.DEFAULT_FILE_STORAGE is: {settings.DEFAULT_FILE_STORAGE}")
-            print(f"VIEW: default_storage object is: {default_storage}")
-            item = form.save()
-            if getattr(item, '_is_blurry', False):
-                messages.warning(request, "The uploaded image appears to be blurry. Consider uploading a clearer photo.")
-            messages.success(request, f'"{item.name}" has been added to your wardrobe!')
-            return redirect('app:dashboard')
-    else:
-        form = WardrobeItemForm(user=request.user)
-    
-    return render(request, 'app/wardrobe_item_form.html', {'form': form})
+    def get_queryset(self):
+        return Outfit.objects.filter(user=self.request.user).order_by('-created_at')
 
-@login_required
-def wardrobe_list(request):
-    """Display the user's wardrobe items with filtering."""
-    items = WardrobeItem.objects.filter(owner=request.user)
-    category_choices = WardrobeItem._meta.get_field('category').choices
-    season_choices = WardrobeItem._meta.get_field('season').choices
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user, is_ai_generated=False)
 
-    # Filtering
-    category = request.GET.get('category')
-    season = request.GET.get('season')
-    brand = request.GET.get('brand')
-    material = request.GET.get('material')
-    style_tag = request.GET.get('style_tag')
+    @action(detail=True, methods=['post'], url_path='add-items')
+    def add_items(self, request, pk=None):
+        outfit = self.get_object()
+        item_ids = request.data.get('items', [])
+        items = WardrobeItem.objects.filter(owner=request.user, id__in=item_ids)
+        outfit.items.add(*items)
+        return Response(OutfitSerializer(outfit).data)
 
-    if category:
-        items = items.filter(category=category)
-    if season:
-        items = items.filter(season=season)
-    if brand:
-        items = items.filter(brand__icontains=brand)
-    if material:
-        items = items.filter(material__icontains=material)
-    if style_tag:
-        items = items.filter(style_tags__icontains=style_tag)
 
-    return render(request, 'app/wardrobe_list.html', {
-        'items': items,
-        'category_choices': category_choices,
-        'season_choices': season_choices,
-    })
+class RecommendationViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Recommendation.objects.all()
+    serializer_class = RecommendationSerializer
+    permission_classes = [permissions.IsAuthenticated, IsOwner]
 
-@login_required
-def create_outfit(request):
-    if request.method == 'POST':
-        form = OutfitForm(request.POST)
-        form.fields['items'].queryset = WardrobeItem.objects.filter(owner=request.user)
-        if form.is_valid():
-            # Get selected items and occasion
-            items = form.cleaned_data['items']
-            occasion = form.cleaned_data['occasion']
-            
-            # Prepare data for Gemini
-            item_data = [{
-                'id': item.id,
-                'item_name': item.item_name,      
-                'category': item.category,            
-                'color': item.color,                  
-                'pattern': item.pattern,              
-                'material': item.material,           
-                'season': item.season,                
-                'style_tags': item.style_tags,        
-                'brand': item.brand,              
-                'occasions': item.occasions,          
-                'layer': item.layer,                  
-            } for item in items]
-            
-            # Get recommendation from Gemini
-            gemini_text = get_outfit_recommendation(item_data, occasion)
-            
-            # Save Recommendation
-            recommendation = Recommendation.objects.create(
-                user=request.user,
-                text=gemini_text,
-                occasion=occasion
-            )
-            recommendation.items.set(items)
-            recommendation.save()
-            
-            return redirect('app:recommendation_result', recommendation_id=recommendation.id)
-    else:
-        form = OutfitForm()
-        form.fields['items'].queryset = WardrobeItem.objects.filter(owner=request.user)
-    return render(request, 'app/create_outfit.html', {'form': form})
+    def get_queryset(self):
+        return Recommendation.objects.filter(user=self.request.user).order_by('-created_at')
 
-@login_required
-def outfit_result(request, outfit_id=None, recommendation_id=None):
-    # If POST, save the recommended outfit
-    if request.method == 'POST' and recommendation_id:
-        recommendation = get_object_or_404(Recommendation, id=recommendation_id, user=request.user)
+    @action(detail=True, methods=['post'], url_path='save-as-outfit')
+    def save_as_outfit(self, request, pk=None):
+        recommendation = self.get_object()
         outfit = Outfit.objects.create(
             user=request.user,
             name=f"Outfit for {recommendation.occasion or 'Occasion'}",
             occasion=recommendation.occasion,
-            season='all',  # You can improve this by letting user pick
+            season='all',
             is_ai_generated=True
         )
         outfit.items.set(recommendation.items.all())
-        outfit.save()
-        messages.success(request, 'Outfit saved!')
-        return redirect('app:outfit_result', outfit_id=outfit.id)
-    
-    # If GET with outfit_id, show the saved outfit
-    if outfit_id:
-        outfit = get_object_or_404(Outfit, id=outfit_id, user=request.user)
-        return render(request, 'app/outfit_result.html', {'outfit': outfit, 'is_recommendation': False})
-    
-    # If GET with recommendation_id, show the recommendation
-    if recommendation_id:
-        recommendation = get_object_or_404(Recommendation, id=recommendation_id, user=request.user)
-        wardrobe_items = recommendation.items.all()
-        return render(request, 'app/outfit_result.html', {
-            'recommendation': recommendation,
-            'wardrobe_items': wardrobe_items,
-            'is_recommendation': True
+        return Response(OutfitSerializer(outfit).data, status=status.HTTP_201_CREATED)
+
+
+class AuthRegisterView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                'user': UserSerializer(user).data,
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+            }, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AuthLoginView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        user = authenticate(request, username=username, password=password)
+        if not user:
+            return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            'user': UserSerializer(user).data,
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
         })
-    
-    # Otherwise, show error
-    messages.error(request, 'No recommendation to show.')
-    return redirect('app:create_outfit')
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def auth_logout(request):
+    refresh_token = request.data.get('refresh')
+    if refresh_token:
+        try:
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+        except Exception:
+            pass
+    return Response({'detail': 'Logged out'})
+
+
+class GenerateRecommendationView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        # Expect: {"items": [ids...], "occasion": "string"}
+        item_ids = request.data.get('items', [])
+        occasion = request.data.get('occasion')
+        items = WardrobeItem.objects.filter(owner=request.user, id__in=item_ids)
+        if not items:
+            return Response({'detail': 'No valid items provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+        item_payload = [{
+            'id': i.id,
+            'item_name': i.item_name,
+            'category': i.category,
+            'color': i.color,
+            'pattern': i.pattern,
+            'material': i.material,
+            'season': i.season,
+            'style_tags': i.style_tags,
+            'brand': i.brand,
+            'occasions': i.occasions,
+            'layer': i.layer,
+        } for i in items]
+
+        # Call existing helper (Gemini)
+        text = get_outfit_recommendation(item_payload, occasion)
+
+        rec = Recommendation.objects.create(user=request.user, text=text, occasion=occasion)
+        rec.items.set(items)
+        return Response(RecommendationSerializer(rec).data, status=status.HTTP_201_CREATED)
