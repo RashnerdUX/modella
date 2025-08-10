@@ -92,11 +92,16 @@ class AuthRegisterView(APIView):
         if serializer.is_valid():
             user = serializer.save()
             refresh = RefreshToken.for_user(user)
-            return Response({
+            access_token = str(refresh.access_token)
+            response = Response({
                 'user': UserSerializer(user).data,
-                'refresh': str(refresh),
-                'access': str(refresh.access_token),
+                'detail': 'Registered successfully'
             }, status=status.HTTP_201_CREATED)
+            # Set cookies (HttpOnly)
+            secure = not request.get_host().startswith('localhost')
+            response.set_cookie('access_token', access_token, httponly=True, secure=secure, samesite='Lax')
+            response.set_cookie('refresh_token', str(refresh), httponly=True, secure=secure, samesite='Lax')
+            return response
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -110,11 +115,12 @@ class AuthLoginView(APIView):
         if not user:
             return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
         refresh = RefreshToken.for_user(user)
-        return Response({
-            'user': UserSerializer(user).data,
-            'refresh': str(refresh),
-            'access': str(refresh.access_token),
-        })
+    access_token = str(refresh.access_token)
+    response = Response({'user': UserSerializer(user).data, 'detail': 'Login successful'})
+    secure = not request.get_host().startswith('localhost')
+    response.set_cookie('access_token', access_token, httponly=True, secure=secure, samesite='Lax')
+    response.set_cookie('refresh_token', str(refresh), httponly=True, secure=secure, samesite='Lax')
+    return response
 
 
 @api_view(['POST'])
@@ -127,7 +133,10 @@ def auth_logout(request):
             token.blacklist()
         except Exception:
             pass
-    return Response({'detail': 'Logged out'})
+    response = Response({'detail': 'Logged out'})
+    response.delete_cookie('access_token')
+    response.delete_cookie('refresh_token')
+    return response
 
 
 class GenerateRecommendationView(APIView):
