@@ -91,16 +91,60 @@ npm run build
 
 See [TECH_STACK.md](TECH_STACK.md) for detailed technology information.
 
-## Deployment
+## Deployment Strategies
 
-See [DEPLOYMENT.md](DEPLOYMENT.md) for Railway deployment instructions.
+### Option 1: Monolithic Deployment (Recommended for MVP)
+**Platform:** Railway
+- Single service deployment
+- Built-in PostgreSQL and Redis
+- Automatic HTTPS and domain management
+- Cost-effective for development and small-scale production
 
-## Contributing
+### Option 2: Separated Frontend/Backend
+**Frontend:** Vercel or Netlify  
+**Backend:** Railway
+- Independent scaling and deployment
+- Optimized frontend performance with CDN
+- Preview deployments for feature branches
+- Better suited for teams with frontend specialists
 
-1. Create a feature branch: `git checkout -b feature/your-feature`
-2. Make your changes and test thoroughly
-3. Update documentation if needed
-4. Submit a pull request
+### Option 3: Multi-Service Architecture
+**Services:** Railway multi-container or cloud provider
+- Frontend, Backend, Worker, and Database as separate services
+- Advanced monitoring and logging
+- Horizontal scaling capabilities
+- Enterprise-ready architecture
+
+## Development Workflow
+
+### Local Development
+```bash
+# Terminal 1: Backend
+python src/manage.py runserver
+
+# Terminal 2: Frontend  
+cd frontend && npm run dev
+
+# Terminal 3: Background Tasks
+celery -A modella worker -l info
+```
+
+### Branch Strategy
+- **main:** Production deployments
+- **develop:** Staging environment
+- **feature/*:** Preview deployments (automatic with Vercel/Netlify)
+
+### Testing & Quality Assurance
+```bash
+# Backend tests
+python src/manage.py test
+
+# Frontend tests and type checking
+cd frontend && npm run typecheck
+
+# Build verification
+cd frontend && npm run build
+```
 
 ## License
 

@@ -28,8 +28,26 @@
 - **Git** (version control)
 
 ## Hosting & Deployment
-- **Railway** (containerized deployment)
-- **PostgreSQL** (managed database)
-- **Redis** (managed cache/queue)
+
+### Current Options
+- **Railway** (containerized deployment with PostgreSQL + Redis)
 - **AWS S3** (media storage)
 - **Docker** (containerization)
+
+### Frontend Deployment Alternatives
+- **Vercel** (automatic deployments, edge functions, analytics)
+- **Netlify** (JAMstack optimization, form handling, A/B testing)
+- **Railway Frontend Service** (separate container for React app)
+
+### Future Scaling Considerations
+- **CDN:** Cloudflare or AWS CloudFront for global performance
+- **Database:** PostgreSQL read replicas, connection pooling
+- **Caching:** Redis caching layer, browser caching strategies
+- **Monitoring:** Sentry error tracking, performance monitoring
+- **CI/CD:** GitHub Actions, automatic testing and deployment
+
+### Migration Paths
+- **Database:** SQLite → PostgreSQL → Multi-region PostgreSQL
+- **Deployment:** Monolithic → Separated services → Microservices
+- **Frontend:** SPA → PWA → React Native mobile app
+- **AI Processing:** Embedded → Dedicated service → GPU-optimized instances
