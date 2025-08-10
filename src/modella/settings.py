@@ -222,3 +222,6 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 NPM_BIN_PATH = 'C:/Program Files/nodejs/npm.cmd'
 #'C:/Users/User/AppData/Roaming/npm/node_modules/npm/bin'
 TAILWIND_APP_NAME = 'theme'
+INTERNAL_IPS = [
+    "127.0.0.1",
+]

@@ -1,4 +1,5 @@
 {% load static %}
+{% load static tailwind_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,9 +11,12 @@
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{% static 'app/images/favicon.ico' %}">
     
-    <!-- CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    {% tailwind_css %}
+    
+    <!-- Font Awesome (keeping this for icons) -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    
     {% block extra_css %}{% endblock %}
     <link href="{% static 'app/css/style.css' %}" rel="stylesheet">
 
@@ -28,51 +32,101 @@
     <!-- CSRF Token -->
     {% csrf_token %}
 </head>
-<body class="{% block body_class %}{% endblock %}">
+<body class="{% block body_class %}min-h-screen flex flex-col bg-gray-50{% endblock %}">
     <!-- Header -->
-    <header class="main-header">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container">
-                <a class="navbar-brand" href="{% url 'app:index' %}">
-                    <img src="{% static 'app/images/logo.png' %}" alt="Modella Logo" height="30">
-                    Modella
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+    <header class="bg-white shadow-sm">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <a href="{% url 'app:index' %}" class="flex items-center space-x-2">
+                        <img src="{% static 'app/images/logo.png' %}" alt="Modella Logo" class="h-8">
+                        <span class="font-bold text-xl text-gray-900">Modella</span>
+                    </a>
+                </div>
                 
-                <div class="collapse navbar-collapse" id="navbarMain">
-                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                <!-- Desktop Navigation -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
                         {% block navigation %}
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}" 
-                               href="{% url 'app:index' %}">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.url_name == 'blog' %}active{% endif %}" 
-                               href="{% url 'app:blog' %}">Blog</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}" 
-                               href="{% url 'app:about' %}">About</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}" 
-                               href="{% url 'app:contact' %}">Contact Us</a>
-                        </li>
+                        <a href="{% url 'app:index' %}" 
+                           class="{% if request.resolver_match.url_name == 'index' %}bg-gray-900 text-white{% else %}text-gray-500 hover:bg-gray-700 hover:text-white{% endif %} px-3 py-2 rounded-md text-sm font-medium">
+                           Home
+                        </a>
+                        <a href="{% url 'app:blog' %}" 
+                           class="{% if request.resolver_match.url_name == 'blog' %}bg-gray-900 text-white{% else %}text-gray-500 hover:bg-gray-700 hover:text-white{% endif %} px-3 py-2 rounded-md text-sm font-medium">
+                           Blog
+                        </a>
+                        <a href="{% url 'app:about' %}" 
+                           class="{% if request.resolver_match.url_name == 'about' %}bg-gray-900 text-white{% else %}text-gray-500 hover:bg-gray-700 hover:text-white{% endif %} px-3 py-2 rounded-md text-sm font-medium">
+                           About
+                        </a>
+                        <a href="{% url 'app:contact' %}" 
+                           class="{% if request.resolver_match.url_name == 'contact' %}bg-gray-900 text-white{% else %}text-gray-500 hover:bg-gray-700 hover:text-white{% endif %} px-3 py-2 rounded-md text-sm font-medium">
+                           Contact Us
+                        </a>
                         {% endblock %}
-                    </ul>
-                    
-                    <div class="navbar-nav align-items-center">
+                    </div>
+                </div>
+                
+                <!-- Auth buttons -->
+                <div class="hidden md:block">
+                    <div class="ml-4 flex items-center space-x-3">
                         {% if user.is_authenticated %}
-                            <form method="post" action="{% url 'logout' %}" class="d-inline">
+                            <form method="post" action="{% url 'logout' %}" class="inline">
                                 {% csrf_token %}
-                                <button type="submit" class="nav-link me-3 btn btn-link">Sign out</button>
+                                <button type="submit" class="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
+                                    Sign out
+                                </button>
                             </form>
-                            <a class="btn btn-primary" href="{% url 'app:dashboard' %}">Enter App</a>
+                            <a href="{% url 'app:dashboard' %}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+                                Enter App
+                            </a>
                         {% else %}
-                            <a class="nav-link me-3" href="{% url 'login' %}">Login</a>
-                            <a class="btn btn-primary" href="{% url 'register' %}">Register</a>
+                            <a href="{% url 'login' %}" class="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
+                                Login
+                            </a>
+                            <a href="{% url 'register' %}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+                                Register
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button type="button" class="mobile-menu-button inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile menu -->
+            <div class="mobile-menu hidden md:hidden">
+                <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                    <a href="{% url 'app:index' %}" class="{% if request.resolver_match.url_name == 'index' %}bg-gray-900 text-white{% else %}text-gray-300 hover:bg-gray-700 hover:text-white{% endif %} block px-3 py-2 rounded-md text-base font-medium">Home</a>
+                    <a href="{% url 'app:blog' %}" class="{% if request.resolver_match.url_name == 'blog' %}bg-gray-900 text-white{% else %}text-gray-300 hover:bg-gray-700 hover:text-white{% endif %} block px-3 py-2 rounded-md text-base font-medium">Blog</a>
+                    <a href="{% url 'app:about' %}" class="{% if request.resolver_match.url_name == 'about' %}bg-gray-900 text-white{% else %}text-gray-300 hover:bg-gray-700 hover:text-white{% endif %} block px-3 py-2 rounded-md text-base font-medium">About</a>
+                    <a href="{% url 'app:contact' %}" class="{% if request.resolver_match.url_name == 'contact' %}bg-gray-900 text-white{% else %}text-gray-300 hover:bg-gray-700 hover:text-white{% endif %} block px-3 py-2 rounded-md text-base font-medium">Contact Us</a>
+                </div>
+                <div class="pt-4 pb-3 border-t border-gray-700">
+                    <div class="px-2 space-y-1">
+                        {% if user.is_authenticated %}
+                            <form method="post" action="{% url 'logout' %}" class="block">
+                                {% csrf_token %}
+                                <button type="submit" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium w-full text-left">
+                                    Sign out
+                                </button>
+                            </form>
+                            <a href="{% url 'app:dashboard' %}" class="bg-blue-600 hover:bg-blue-700 text-white block px-3 py-2 rounded-md text-base font-medium">
+                                Enter App
+                            </a>
+                        {% else %}
+                            <a href="{% url 'login' %}" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Login</a>
+                            <a href="{% url 'register' %}" class="bg-blue-600 hover:bg-blue-700 text-white block px-3 py-2 rounded-md text-base font-medium">Register</a>
                         {% endif %}
                     </div>
                 </div>
@@ -82,61 +136,70 @@
 
     <!-- Messages -->
     {% if messages %}
-    <div class="container mt-3">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
         {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div class="bg-{% if message.tags == 'error' %}red{% elif message.tags == 'warning' %}yellow{% elif message.tags == 'success' %}green{% else %}blue{% endif %}-100 border border-{% if message.tags == 'error' %}red{% elif message.tags == 'warning' %}yellow{% elif message.tags == 'success' %}green{% else %}blue{% endif %}-400 text-{% if message.tags == 'error' %}red{% elif message.tags == 'warning' %}yellow{% elif message.tags == 'success' %}green{% else %}blue{% endif %}-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <span class="block sm:inline">{{ message }}</span>
+            <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+                <svg class="fill-current h-6 w-6 text-{% if message.tags == 'error' %}red{% elif message.tags == 'warning' %}yellow{% elif message.tags == 'success' %}green{% else %}blue{% endif %}-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/>
+                </svg>
+            </span>
         </div>
         {% endfor %}
     </div>
     {% endif %}
 
     <!-- Main Content -->
-    <main class="main-content">
-        <div class="container mt-4">
+    <main class="flex-1">
+        <h1 class="font-bold text-6xl text-blue-700"> TAILWIND TEST </h1>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             {% block content %}
             {% endblock %}
         </div>
     </main>
 
     <!-- Footer -->
-    <footer class="footer mt-auto py-3 bg-light">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4">
-                    <h5>About Us</h5>
-                    <p>Modella is your personal AI stylist.</p>
+    <footer class="bg-white border-t">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h5 class="text-lg font-semibold text-gray-900 mb-4">About Us</h5>
+                    <p class="text-gray-600">Modella is your personal AI stylist.</p>
                 </div>
-                <div class="col-md-4">
-                    <h5>Quick Links</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="{% url 'app:about' %}">About</a></li>
-                        <li><a href="{% url 'app:contact' %}">Contact</a></li>
-                        <li><a href="{% url 'app:privacy' %}">Privacy Policy</a></li>
-                        <li><a href="{% url 'app:terms' %}">Terms of Service</a></li>
+                <div>
+                    <h5 class="text-lg font-semibold text-gray-900 mb-4">Quick Links</h5>
+                    <ul class="space-y-2">
+                        <li><a href="{% url 'app:about' %}" class="text-gray-600 hover:text-gray-900">About</a></li>
+                        <li><a href="{% url 'app:contact' %}" class="text-gray-600 hover:text-gray-900">Contact</a></li>
+                        <li><a href="{% url 'app:privacy' %}" class="text-gray-600 hover:text-gray-900">Privacy Policy</a></li>
+                        <li><a href="{% url 'app:terms' %}" class="text-gray-600 hover:text-gray-900">Terms of Service</a></li>
                     </ul>
                 </div>
-                <div class="col-md-4">
-                    <h5>Connect With Us</h5>
-                    <div class="social-links">
-                        <a href="#" class="me-2"><i class="fab fa-facebook"></i></a>
-                        <a href="#" class="me-2"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="me-2"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="me-2"><i class="fab fa-pinterest"></i></a>
+                <div>
+                    <h5 class="text-lg font-semibold text-gray-900 mb-4">Connect With Us</h5>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-600 hover:text-gray-900"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-gray-600 hover:text-gray-900"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-600 hover:text-gray-900"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-600 hover:text-gray-900"><i class="fab fa-pinterest"></i></a>
                     </div>
                 </div>
             </div>
-            <hr>
+            <hr class="my-8 border-gray-200">
             <div class="text-center">
-                <p>&copy; {% now "Y" %} Modella. All rights reserved.</p>
+                <p class="text-gray-600">&copy; {% now "Y" %} Modella. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
-    <!-- JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- Mobile menu toggle script -->
+    <script>
+        document.querySelector('.mobile-menu-button').addEventListener('click', function() {
+            document.querySelector('.mobile-menu').classList.toggle('hidden');
+        });
+    </script>
+    
     {% block extra_js %}{% endblock %}
     <script src="{% static 'app/js/main.js' %}"></script>
 
