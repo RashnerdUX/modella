@@ -115,12 +115,12 @@ class AuthLoginView(APIView):
         if not user:
             return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
         refresh = RefreshToken.for_user(user)
-    access_token = str(refresh.access_token)
-    response = Response({'user': UserSerializer(user).data, 'detail': 'Login successful'})
-    secure = not request.get_host().startswith('localhost')
-    response.set_cookie('access_token', access_token, httponly=True, secure=secure, samesite='Lax')
-    response.set_cookie('refresh_token', str(refresh), httponly=True, secure=secure, samesite='Lax')
-    return response
+        access_token = str(refresh.access_token)
+        response = Response({'user': UserSerializer(user).data, 'detail': 'Login successful'})
+        secure = not request.get_host().startswith('localhost')
+        response.set_cookie('access_token', access_token, httponly=True, secure=secure, samesite='Lax')
+        response.set_cookie('refresh_token', str(refresh), httponly=True, secure=secure, samesite='Lax')
+        return response
 
 
 @api_view(['POST'])
@@ -137,6 +137,12 @@ def auth_logout(request):
     response.delete_cookie('access_token')
     response.delete_cookie('refresh_token')
     return response
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def auth_me(request):
+    return Response({'user': UserSerializer(request.user).data})
 
 
 class GenerateRecommendationView(APIView):

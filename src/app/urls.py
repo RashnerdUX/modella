@@ -7,6 +7,7 @@ from .views import (
     AuthRegisterView,
     AuthLoginView,
     auth_logout,
+    auth_me,
     GenerateRecommendationView,
 )
 from rest_framework_simplejwt.views import TokenRefreshView
@@ -22,6 +23,7 @@ urlpatterns = [
     path('auth/register/', AuthRegisterView.as_view(), name='auth-register'),
     path('auth/login/', AuthLoginView.as_view(), name='auth-login'),
     path('auth/logout/', auth_logout, name='auth-logout'),
+    path('auth/me/', auth_me, name='auth-me'),
     path('auth/refresh/', TokenRefreshView.as_view(), name='token-refresh'),
     path('ai/recommend/', GenerateRecommendationView.as_view(), name='generate-recommendation'),
     path('', include(router.urls)),
