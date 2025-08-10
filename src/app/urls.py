@@ -10,7 +10,7 @@ from .views import (
     auth_me,
     GenerateRecommendationView,
 )
-from rest_framework_simplejwt.views import TokenRefreshView
+from .views import CookieTokenRefreshView
 
 app_name = 'app'
 
@@ -24,7 +24,7 @@ urlpatterns = [
     path('auth/login/', AuthLoginView.as_view(), name='auth-login'),
     path('auth/logout/', auth_logout, name='auth-logout'),
     path('auth/me/', auth_me, name='auth-me'),
-    path('auth/refresh/', TokenRefreshView.as_view(), name='token-refresh'),
+    path('auth/refresh/', CookieTokenRefreshView.as_view(), name='token-refresh'),
     path('ai/recommend/', GenerateRecommendationView.as_view(), name='generate-recommendation'),
     path('', include(router.urls)),
 ]

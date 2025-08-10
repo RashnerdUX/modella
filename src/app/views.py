@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.decorators import action, api_view, permission_classes
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenRefreshView
 from django.shortcuts import get_object_or_404
 from .models import WardrobeItem, Outfit, Recommendation
 from .serializers import (
@@ -176,3 +177,28 @@ class GenerateRecommendationView(APIView):
         rec = Recommendation.objects.create(user=request.user, text=text, occasion=occasion)
         rec.items.set(items)
         return Response(RecommendationSerializer(rec).data, status=status.HTTP_201_CREATED)
+
+
+class CookieTokenRefreshView(TokenRefreshView):
+    """Override token refresh to set new cookies."""
+    def post(self, request, *args, **kwargs):
+        # Expect refresh cookie
+        if 'refresh_token' not in request.COOKIES and 'refresh' not in request.data:
+            return Response({'detail': 'No refresh token provided'}, status=status.HTTP_400_BAD_REQUEST)
+        data = request.data.copy()
+        if 'refresh' not in data:
+            data['refresh'] = request.COOKIES.get('refresh_token')
+        serializer = self.get_serializer(data=data)
+        try:
+            serializer.is_valid(raise_exception=True)
+        except Exception:
+            return Response({'detail': 'Invalid refresh token'}, status=status.HTTP_401_UNAUTHORIZED)
+        access = serializer.validated_data.get('access')
+        refresh = serializer.validated_data.get('refresh')  # Only present if rotated
+        response = Response({'detail': 'Token refreshed'})
+        secure = not request.get_host().startswith('localhost')
+        if access:
+            response.set_cookie('access_token', access, httponly=True, secure=secure, samesite='Lax')
+        if refresh:
+            response.set_cookie('refresh_token', refresh, httponly=True, secure=secure, samesite='Lax')
+        return response

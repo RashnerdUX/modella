@@ -1,30 +1,27 @@
 import type { Route } from "./+types/register";
-import { FormEvent, useState } from "react";
+import type { FormEvent } from "react";
+import { useState } from "react";
+import { useAuth } from "../auth";
 
 export function meta({}: Route.MetaArgs) { return [{ title: "Register" }]; }
 
 export default function Register() {
+  const { register: registerUser, loading, user } = useAuth();
   const [form, setForm] = useState({ username: "", email: "", password: "" });
   const [error, setError] = useState<string | null>(null);
 
   function update<K extends keyof typeof form>(k: K, v: string) { setForm({ ...form, [k]: v }); }
 
+  if (!loading && user) {
+    if (typeof window !== 'undefined') window.location.href = '/dashboard';
+  }
+
   async function submit(e: FormEvent) {
     e.preventDefault();
     setError(null);
-    try {
-      const res = await fetch("/api/auth/register/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-        credentials: "include",
-      });
-      if (!res.ok) throw new Error("Registration failed");
-      const me = await fetch("/api/auth/me/", { credentials: "include" });
-      if (me.ok) window.location.href = "/dashboard"; else throw new Error("Unable to fetch user");
-    } catch (err: any) {
-      setError(err.message || "Registration failed");
-    }
+    const ok = await registerUser(form);
+    if (!ok) setError("Registration failed");
+    else window.location.href = '/dashboard';
   }
 
   return (
