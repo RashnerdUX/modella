@@ -12,7 +12,7 @@ interface AuthContextShape {
 
 const AuthContext = createContext<AuthContextShape | undefined>(undefined);
 
-const REFRESH_INTERVAL_MS = 1000 * 60 * 50; // 50 minutes for 60m access lifetime (adjust if lifetime differs)
+const REFRESH_INTERVAL_MS = 1000 * 60 * 50; // 50 minutes for 60m access lifetime (adjust when Refresh token lifetime differs from 60m)
 
 export const AuthProvider: React.FC<{children:React.ReactNode}> = ({children}) => {
   const [user, setUser] = useState<User | null>(null);
