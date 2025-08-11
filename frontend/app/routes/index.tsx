@@ -1,12 +1,13 @@
 import { Welcome } from "../welcome/welcome";
+import { LandingPage } from "~/landing/landing_page";
 
 export function meta() {
   return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: "Modella" },
+    { name: "description", content: "Elevate your fashion sense today with Modella" },
   ];
 }
 
 export default function Home() {
-  return <Welcome />;
+  return <LandingPage />;
 }
