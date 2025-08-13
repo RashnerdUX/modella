@@ -9,6 +9,8 @@ from .views import (
     auth_logout,
     auth_me,
     GenerateRecommendationView,
+    initialize_payment,
+    paystack_webhook,
 )
 from .views import CookieTokenRefreshView
 
@@ -26,5 +28,7 @@ urlpatterns = [
     path('auth/me/', auth_me, name='auth-me'),
     path('auth/refresh/', CookieTokenRefreshView.as_view(), name='token-refresh'),
     path('ai/recommend/', GenerateRecommendationView.as_view(), name='generate-recommendation'),
+    path('payment/initialize/', initialize_payment, name='initialize-payment'),
+    path('webhook/paystack/', paystack_webhook, name='paystack-webhook'),
     path('', include(router.urls)),
 ]

@@ -1,3 +1,5 @@
+import requests
+from decouple import config
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -15,6 +17,10 @@ from .serializers import (
 )
 from django.contrib.auth.models import User
 from .helpers import get_outfit_recommendation
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework import permissions, status
+from rest_framework.response import Response
+import hmac, hashlib
 
 
 class IsOwner(permissions.BasePermission):
@@ -145,6 +151,60 @@ def auth_logout(request):
 def auth_me(request):
     return Response({'user': UserSerializer(request.user).data})
 
+@api_view(["GET"])
+@permission_classes([permissions.IsAuthenticated])
+def initialize_payment(request): 
+    # TODO: Change the amount to reflect the actual billing plans
+    plan = request.query_params.get("plan")
+    if plan == "everyday_style":
+        amount = 10000  # Everyday style plan fee in kobo
+    elif plan == "style_icon":
+        amount = 120000  # Style icon plan fee in kobo
+    else:
+        return Response({'detail': 'Invalid plan or no plan was selected'}, status=status.HTTP_400_BAD_REQUEST)
+    url = "https://api.paystack.co/transaction/initialize"
+    data = {
+        "email": request.user.email,
+        "amount": amount,
+    }
+    paystack_auth = config("PAYSTACK_SECRET_KEY", default="Not available")
+    headers = {"Authorization": f"Bearer {paystack_auth}"}
+    r = requests.post(url, json=data, headers=headers)
+    response = r.json()
+    # Check for errors
+    if r.status_code != 200:
+        return Response({'detail': 'Payment initialization failed', 'error': response.get("message")}, status=status.HTTP_400_BAD_REQUEST)
+    # TODO: Might need to store the access code
+    access_code = response.get("data", {}).get("access_code")
+    # Initialize payment process
+    return Response({'detail': 'Payment initialized', 'access_code': access_code})
+
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def paystack_webhook(request):
+    # verify Paystack signature
+    secret = config("PAYSTACK_SECRET_KEY", default="")
+    signature = request.META.get("HTTP_X_PAYSTACK_SIGNATURE", "")
+    computed = hmac.new(secret.encode(), request.body, hashlib.sha512).hexdigest()
+    if not hmac.compare_digest(computed, signature):
+        return Response({'detail': 'Invalid signature'}, status=status.HTTP_400_BAD_REQUEST)
+
+    event = request.data.get("event")
+    # Note the value of the event depends on what the user paid.
+    # If it was a subscription event, it'd be "subscription.create" or "subscription.update"
+    # TODO: Ensure the transaction initialization is synced up with the webhook
+    if event == "charge.success":
+        data = request.data.get("data", {})
+        reference = data.get("reference")
+        customer_email = data.get("customer", {}).get("email")
+        # TODO: lookup or create a Payment/Subscription record and mark as paid
+        user = User.objects.filter(email=customer_email).first()
+        if user:
+            # Update user's profile here
+            # TODO: Update the User model to handle free and premium users
+            pass
+
+    return Response({'status': 'ok'}, status=status.HTTP_200_OK)
 
 class GenerateRecommendationView(APIView):
     permission_classes = [permissions.IsAuthenticated]
