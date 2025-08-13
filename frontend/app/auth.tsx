@@ -3,11 +3,12 @@ import React, { createContext, useContext, useEffect, useState, useCallback } fr
 interface User { id:number; username:string; email:string; }
 interface AuthContextShape {
   user: User | null;
-  loading: boolean;
+  loading: boolean; // true only while an explicit ensureUser() call is in-flight
   login: (username:string, password:string)=>Promise<boolean>;
   register: (data:{username:string; email:string; password:string})=>Promise<boolean>;
   logout: ()=>Promise<void>;
   authFetch: (input:RequestInfo, init?:RequestInit)=>Promise<Response>;
+  ensureUser: ()=>Promise<boolean>; // lazily fetch current user if not already loaded
 }
 
 const AuthContext = createContext<AuthContextShape | undefined>(undefined);
@@ -16,7 +17,7 @@ const REFRESH_INTERVAL_MS = 1000 * 60 * 50; // 50 minutes for 60m access lifetim
 
 export const AuthProvider: React.FC<{children:React.ReactNode}> = ({children}) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [refreshTimer, setRefreshTimer] = useState<number | null>(null);
 
   const fetchMe = useCallback(async () => {
@@ -40,18 +41,25 @@ export const AuthProvider: React.FC<{children:React.ReactNode}> = ({children}) =
     setRefreshTimer(id);
   }, [refreshTimer]);
 
+  // Lazy user loading: do NOT fetch on mount. ProtectedRoute or callers invoke ensureUser().
   useEffect(() => {
-    (async () => {
-      await fetchMe();
-      scheduleRefresh();
-      setLoading(false);
-    })();
     return () => { if (refreshTimer) window.clearTimeout(refreshTimer); };
-  }, [fetchMe, scheduleRefresh]);
+  }, [refreshTimer]);
+
+  const ensureUser = useCallback(async () => {
+    if (user) return true; // already have
+    if (loading) return !!user; // in progress
+    setLoading(true);
+    const ok = await fetchMe();
+    if (ok) scheduleRefresh();
+    setLoading(false);
+    return ok;
+  }, [user, loading, fetchMe, scheduleRefresh]);
 
   const login = useCallback(async (username:string, password:string) => {
     const res = await fetch('/api/auth/login/', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username,password}), credentials:'include'});
     if (!res.ok) return false;
+    // login returns set-cookie with tokens, we then fetch me to populate context
     await fetchMe();
     scheduleRefresh();
     return true;
@@ -83,7 +91,7 @@ export const AuthProvider: React.FC<{children:React.ReactNode}> = ({children}) =
   }, []);
 
   return (
-    <AuthContext.Provider value={{user, loading, login, register, logout, authFetch}}>
+    <AuthContext.Provider value={{user, loading, login, register, logout, authFetch, ensureUser}}>
       {children}
     </AuthContext.Provider>
   );
