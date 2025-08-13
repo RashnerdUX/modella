@@ -16,6 +16,8 @@
     --color-secondary: #F4D3D7;
     /* Accent color - Champagne Gold. Keep as alternate accent*/
     --color-accent: #D4AF37;
+    /* Border Color - Light Gray */
+    --color-border: #f2f2f2;
 }
 
 html,

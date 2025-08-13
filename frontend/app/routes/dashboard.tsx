@@ -2,8 +2,8 @@ import type { Route } from "./+types/dashboard";
 import { useAuth } from "../auth";
 import { ProtectedRoute } from "../ProtectedRoute";
 
-import Sidebar from "../components/sidebar/sidebar";
-import DashboardHome from "~/components/dashboard/dashboard";
+import Sidebar from "../components/sidebar/Sidebar";
+import DashboardHome from "~/components/dashboard/DashboardHome";
 
 export function meta({}: Route.MetaArgs) { return [{ title: "Dashboard" }]; }
 
@@ -12,7 +12,7 @@ export default function Dashboard() {
   
   return (
     // Remember to add the ProtectedRoute and Use the useAuth Hook
-      <main className="grid gap-4 py-4 grid-cols-[220px_1fr]">
+      <main className="grid gap-4 py-4 grid-cols-[240px_1fr] bg-background pr-4">
         <Sidebar />
         <DashboardHome />
       </main>

@@ -1,13 +1,27 @@
 import React from 'react'
 import type { IconType } from 'react-icons';
-import { FaHome, FaHeart, FaRegSun} from "react-icons/fa";
+import { Icons } from '../../icons';
+import { FaRegSun } from "react-icons/fa";
 
 export const Menu = () => {
   return (
     <div className='flex flex-col space-y-2'>
-        <MenuOption label='Option 1' icon={FaHome} onClick={() => {}} selected={true} />
-        <MenuOption label='Option 2' icon={FaHeart} onClick={() => {}} selected={false} />
-        <MenuOption label='Option 3' icon={FaRegSun} onClick={() => {}} selected={false} />
+        <MenuOption label='Home' icon={Icons.home} onClick={() => {}} selected={true} />
+        <MenuOption label='Wardrobe' icon={Icons.closet} onClick={() => {}} selected={false} />
+        <MenuOption label='Outfits' icon={Icons.outfits} onClick={() => {}} selected={false} />
+        <MenuOption label='Calendar' icon={Icons.calendar} onClick={() => {}} selected={false} />
+        <MenuOption label='Store' icon={Icons.store} onClick={() => {}} selected={false} />
+        <MenuOption label='Profile' icon={Icons.profile} onClick={() => {}} selected={false} />
+    </div>
+  )
+}
+
+export const MoreOptions = () => {
+  return (
+    <div className='flex flex-col space-y-2'>
+        <MenuOption label='Settings' icon={Icons.settings} onClick={() => {}} selected={false} />
+        <MenuOption label='Help' icon={Icons.help} onClick={() => {}} selected={false} />
+        <MenuOption label='Logout' icon={Icons.logout} onClick={() => {}} selected={false} />
     </div>
   )
 }
