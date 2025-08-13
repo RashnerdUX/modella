@@ -3,7 +3,7 @@ import { Link } from "react-router";
 export default function NavigationBar(){
         return <nav className="backdrop-blur-sm sticky top-0 z-50 px-8 py-2 sm:px-16">
                 {/* This only covers the navigation */}
-                <div className="max-w-8xl mx-auto sm:px-4 lg:px-8">
+                <div className="mx-auto sm:px-4 lg:px-8">
                     <div className="flex justify-between items-center h-16">
                         {/* Logo */}
                         <div className="flex items-center">
@@ -20,7 +20,7 @@ export default function NavigationBar(){
                         {/* Auth Buttons */}
                         <div className="flex items-center space-x-4">
                         <Link to="/login" className="text-gray-600 hover:text-primary-600 transition-colors">Login</Link>
-                        <Link to="/register" className="btn-primary">Get Started</Link>
+                        <Link to="/register" className="px-6 py-3 rounded-lg font-semibold bg-[#B76E79] text-white hover:bg-primary-700 transition-colors">Get Started</Link>
                         </div>
                     </div>
                 </div>

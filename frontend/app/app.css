@@ -28,3 +28,21 @@ body {
     color-scheme: dark;
   }
 }
+
+@keyframes flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Utilities for animated gradient borders on cards */
+.card-border-active {
+  background-image: linear-gradient(white, white), linear-gradient(90deg, var(--color-primary), var(--color-accent), var(--color-secondary));
+  background-origin: padding-box, border-box;
+  background-clip: padding-box, border-box;
+}
+.card-border-animate {
+  animation: flow 3s linear infinite;
+  /* first layer (content) remains static, second (border) animates */
+  background-size: 100% 100%, 200% 200%;
+}
