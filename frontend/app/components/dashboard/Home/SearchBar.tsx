@@ -1,7 +1,5 @@
-"use client";
-
 import React, { useState } from "react";
-import { FiCommand, FiSearch } from "react-icons/fi";
+import { Icons } from "../../../icons";
 import { CommandMenu } from "./CommandMenu";
 
 export const Search = () => {
@@ -9,8 +7,8 @@ export const Search = () => {
 
   return (
     <>
-      <div className="bg-stone-200 mb-4 relative rounded flex items-center px-2 py-1.5 text-sm">
-        <FiSearch className="mr-2" />
+      <div className="bg-stone-200 relative rounded flex items-center px-2 py-1.5 text-sm h-full">
+  <Icons.search className="mr-2" />
         <input
           onFocus={(e) => {
             e.target.blur();
@@ -22,7 +20,7 @@ export const Search = () => {
         />
 
         <span className="p-1 text-xs flex gap-0.5 items-center shadow bg-stone-50 rounded absolute right-1.5 top-1/2 -translate-y-1/2">
-          <FiCommand />K
+          <Icons.command />K
         </span>
       </div>
 
