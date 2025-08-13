@@ -1,0 +1,39 @@
+[
+  {
+    "name": "Ada Okeke",
+    "role": "Product Manager",
+    "quote": "Modella removed the stress of choosing what to wear. I look put-together without spending 30 minutes in front of my closet.",
+    "rating": 5,
+    "avatar": "/avatars/monad.png"
+  },
+  {
+    "name": "Kofi Boateng",
+    "role": "Brand Designer",
+    "quote": "The AI suggestions helped me build a cohesive wardrobe. I buy less and wear more—everything works together now.",
+    "rating": 5
+  },
+  {
+    "name": "Zainab Sule",
+    "role": "Student",
+    "quote": "I finally have everyday outfits that feel like ‘me’. The budget-friendly picks are a lifesaver.",
+    "rating": 4
+  },
+  {
+    "name": "Daniel Chukwuma",
+    "role": "Software Engineer",
+    "quote": "Decision fatigue is gone. My morning routine is faster, and I still get compliments at work.",
+    "rating": 5
+  },
+  {
+    "name": "Amaka Lawson",
+    "role": "Entrepreneur",
+    "quote": "Modella keeps me looking polished for client meetings—without hiring a stylist.",
+    "rating": 4
+  },
+  {
+    "name": "Yusuf Rahman",
+    "role": "Photographer",
+    "quote": "The capsule wardrobe recommendations fit my lifestyle. Smart, versatile, and easy to maintain.",
+    "rating": 5
+  }
+]

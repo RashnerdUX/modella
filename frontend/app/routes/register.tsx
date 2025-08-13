@@ -1,39 +1,52 @@
 import type { Route } from "./+types/register";
 import type { FormEvent } from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 import { useAuth } from "../auth";
+import { RegisterComponent } from "../components/authentication/RegisterComponent";
 
 export function meta({}: Route.MetaArgs) { return [{ title: "Register" }]; }
 
 export default function Register() {
   const { register: registerUser, loading, user } = useAuth();
-  const [form, setForm] = useState({ username: "", email: "", password: "" });
+  const navigate = useNavigate();
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  function update<K extends keyof typeof form>(k: K, v: string) { setForm({ ...form, [k]: v }); }
-
-  if (!loading && user) {
-    if (typeof window !== 'undefined') window.location.href = '/dashboard';
-  }
+  useEffect(() => {
+    if (!loading && user) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [loading, user, navigate]);
 
   async function submit(e: FormEvent) {
     e.preventDefault();
     setError(null);
-    const ok = await registerUser(form);
-    if (!ok) setError("Registration failed");
-    else window.location.href = '/dashboard';
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+  const ok = await registerUser({ username, email, password });
+  if (!ok) setError("Registration failed");
+  else navigate('/dashboard', { replace: true });
   }
 
   return (
-    <div className="max-w-sm mx-auto mt-12">
-      <h1 className="text-2xl font-semibold mb-6">Create Account</h1>
-      <form onSubmit={submit} className="space-y-4">
-        <input className="w-full border rounded px-3 py-2" placeholder="Username" value={form.username} onChange={e=>update('username', e.target.value)} />
-        <input className="w-full border rounded px-3 py-2" placeholder="Email" value={form.email} onChange={e=>update('email', e.target.value)} />
-        <input type="password" className="w-full border rounded px-3 py-2" placeholder="Password" value={form.password} onChange={e=>update('password', e.target.value)} />
-        {error && <p className="text-sm text-red-600">{error}</p>}
-        <button className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700">Sign Up</button>
-      </form>
-    </div>
+    <RegisterComponent
+      username={username}
+      email={email}
+      password={password}
+      confirmPassword={confirmPassword}
+      error={error}
+      loading={loading}
+      setUsername={setUsername}
+      setEmail={setEmail}
+      setPassword={setPassword}
+      setConfirmPassword={setConfirmPassword}
+      submit={submit}
+    />
   );
 }
