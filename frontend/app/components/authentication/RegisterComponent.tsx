@@ -99,7 +99,7 @@ export const RegisterComponent: React.FC<RegisterComponentProps> = ({
 				</div>
 				{/* Right Side */}
 				<div className="basis-1/2 flex flex-col space-y-4 items-center justify-center px-16 overflow-y-auto py-8">
-					<div className='flex flex-col items-center mb-2'>
+					<div className='flex flex-col items-center mb-4'>
 						<h1 className='text-2xl font-bold'>Register</h1>
 						<p className='text-center text-gray-400 text-sm'>Sign up to start curating your digital wardrobe.</p>
 						{error && <p className="text-sm text-red-600 mt-2">{error}</p>}
@@ -163,6 +163,7 @@ export const RegisterComponent: React.FC<RegisterComponentProps> = ({
 						>
 							{loading ? 'Creating account...' : 'Sign Up'}
 						</button>
+						<p className="text-xs text-center text-gray-500">Already have an account? <a href="/login" className="text-gray-700 underline hover:text-black">Sign in here</a></p>
 					</form>
 					<div className='flex items-center justify-center w-full my-2'>
 						<hr className="w-full my-4" /> <span className='mx-2 uppercase text-gray-400 font-bold text-[10px]'>Or</span> <hr className="w-full my-4" />

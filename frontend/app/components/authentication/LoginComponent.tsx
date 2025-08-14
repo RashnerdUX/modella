@@ -64,6 +64,7 @@ export const LoginComponent: React.FC<LoginComponentProps> = ({
               onChange={e => setPassword(e.target.value)}
             />
             <button className="w-full bg-gray-700 text-white py-2 rounded hover:bg-black">Sign In</button>
+            <p className="text-xs text-center text-gray-500">Forgot your password? <a href="/forgot-password" className="text-gray-700 underline hover:text-black">Reset here</a></p>
           </form>
             {/* Divider */}
             <div className='flex items-center justify-center w-full my-2'>
