@@ -1,3 +1,4 @@
+import { vercelPreset } from '@vercel/react-router/vite';
 import type { Config } from "@react-router/dev/config";
 
 export default {
@@ -6,4 +7,6 @@ export default {
 
   // Tell React Router exactly where your app directory is
   appDirectory: "app",
+  // Use the Vercel preset for React Router
+  presets: [vercelPreset()],
 } satisfies Config;
