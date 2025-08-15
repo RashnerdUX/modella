@@ -180,7 +180,6 @@ def initialize_payment(request):
     return Response({'detail': 'Payment initialized', 'access_code': access_code})
 
 @api_view(['POST'])
-@permission_classes([permissions.AllowAny])
 def paystack_webhook(request):
     # verify Paystack signature
     secret = config("PAYSTACK_SECRET_KEY", default="")
