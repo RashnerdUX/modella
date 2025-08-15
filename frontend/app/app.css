@@ -1,0 +1,48 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+    /* Custom Colors */
+    /* Primary color for buttons and links - Rose Gold */
+    --color-primary: #B76E79;
+    /* Background color for the app - Ivory white */
+    --color-background: #FAF7F2;
+    /* Color for text - Deep Expresso */
+    --color-text-color: #38250e;
+    /* Secondary color - Soft Pink */
+    --color-secondary: #F4D3D7;
+    /* Accent color - Champagne Gold. Keep as alternate accent*/
+    --color-accent: #D4AF37;
+    /* Border Color - Light Gray */
+    --color-border: #f2f2f2;
+}
+
+html,
+body {
+  @apply bg-white dark:bg-gray-950;
+
+  @media (prefers-color-scheme: dark) {
+    color-scheme: dark;
+  }
+}
+
+@keyframes flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Utilities for animated gradient borders on cards */
+.card-border-active {
+  background-image: linear-gradient(white, white), linear-gradient(90deg, var(--color-primary), var(--color-accent), var(--color-secondary));
+  background-origin: padding-box, border-box;
+  background-clip: padding-box, border-box;
+}
+.card-border-animate {
+  animation: flow 3s linear infinite;
+  /* first layer (content) remains static, second (border) animates */
+  background-size: 100% 100%, 200% 200%;
+}

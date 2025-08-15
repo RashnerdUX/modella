@@ -1,19 +1,34 @@
-from django.urls import path
-from . import views
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import (
+    WardrobeItemViewSet,
+    OutfitViewSet,
+    RecommendationViewSet,
+    AuthRegisterView,
+    AuthLoginView,
+    auth_logout,
+    auth_me,
+    GenerateRecommendationView,
+    initialize_payment,
+    paystack_webhook,
+)
+from .views import CookieTokenRefreshView
 
 app_name = 'app'
 
+router = DefaultRouter()
+router.register(r'wardrobe', WardrobeItemViewSet, basename='wardrobe')
+router.register(r'outfits', OutfitViewSet, basename='outfit')
+router.register(r'recommendations', RecommendationViewSet, basename='recommendation')
+
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('about/', views.about, name='about'),
-    path('blog/', views.blog, name='blog'),
-    path('contact/', views.contact, name='contact'),
-    path('dashboard/', views.dashboard, name='dashboard'),
-    path('privacy-policy/', views.privacypolicy, name='privacy'),
-    path('terms/', views.terms, name='terms'),
-    path('wardrobe/add/', views.add_wardrobe_item, name='add_wardrobe_item'),
-    path('wardrobe/', views.wardrobe_list, name='wardrobe_list'),
-    path('outfit/create/', views.create_outfit, name='create_outfit'),
-    path('outfit/result/outfit/<int:outfit_id>/', views.outfit_result, name='outfit_result'),
-    path('outfit/result/recommendation/<int:recommendation_id>/', views.outfit_result, name='recommendation_result'),
+    path('auth/register/', AuthRegisterView.as_view(), name='auth-register'),
+    path('auth/login/', AuthLoginView.as_view(), name='auth-login'),
+    path('auth/logout/', auth_logout, name='auth-logout'),
+    path('auth/me/', auth_me, name='auth-me'),
+    path('auth/refresh/', CookieTokenRefreshView.as_view(), name='token-refresh'),
+    path('ai/recommend/', GenerateRecommendationView.as_view(), name='generate-recommendation'),
+    path('payment/initialize/', initialize_payment, name='initialize-payment'),
+    path('webhook/paystack/', paystack_webhook, name='paystack-webhook'),
+    path('', include(router.urls)),
 ]
