@@ -197,10 +197,6 @@ def paystack_webhook(request):
         reference = data.get("reference")
         customer_email = data.get("customer", {}).get("email")
         # TODO: lookup or create a Payment/Subscription record and mark as paid
-        user = User.objects.filter(email=customer_email).first()
-        if user:
-            # Update user's profile here
-            # TODO: Update the User model to handle free and premium users
         try:
             user = User.objects.get(email=customer_email)
             # Update user's profile here
