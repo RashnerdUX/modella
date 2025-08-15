@@ -10,7 +10,7 @@ export const PremiumCard = () => {
 
   const handlePayment = () => {
     // For testing, I am hard coding the plan that the user is subscribing for
-    axios.get('/api/premium/status', {withCredentials: true, params: {plan: 'everyday_style'}})
+    axios.get('/api/payment/initialize/', {withCredentials: true, params: {plan: 'everyday_style'}})
       .then(response => {
         // Handle the response data
         const paystack = new PaystackPop();
