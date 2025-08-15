@@ -19,7 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
 class WardrobeItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = WardrobeItem
-        fields = "__all__"
+        fields = ["id", "name", "category", "color", "material", "season", "image", "owner", "date_added"]
         # owner and date_added are set automatically
         read_only_fields = ("id", "owner", "date_added")
 
