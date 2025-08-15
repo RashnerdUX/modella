@@ -201,7 +201,13 @@ def paystack_webhook(request):
         if user:
             # Update user's profile here
             # TODO: Update the User model to handle free and premium users
+        try:
+            user = User.objects.get(email=customer_email)
+            # Update user's profile here
+            # TODO: Update the User model to handle free and premium users
             pass
+        except User.DoesNotExist:
+            user = None
 
     return Response({'status': 'ok'}, status=status.HTTP_200_OK)
 
