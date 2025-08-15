@@ -15,6 +15,7 @@ import os
 from dotenv import load_dotenv
 import dj_database_url
 from decouple import config, Csv
+from datetime import timedelta
 
 # Load environment variables
 load_dotenv()
