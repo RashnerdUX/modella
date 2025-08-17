@@ -8,6 +8,8 @@ from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenRefreshView
 from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 from .models import WardrobeItem, Outfit, Recommendation
 from .serializers import (
     UserSerializer,
@@ -22,6 +24,9 @@ from rest_framework import permissions, status
 from rest_framework.response import Response
 import hmac, hashlib
 
+import logging
+
+logger = logging.getLogger(__name__)
 
 class IsOwner(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
@@ -90,11 +95,14 @@ class RecommendationViewSet(viewsets.ReadOnlyModelViewSet):
         outfit.items.set(recommendation.items.all())
         return Response(OutfitSerializer(outfit).data, status=status.HTTP_201_CREATED)
 
-
+@method_decorator(csrf_exempt, name='dispatch')
 class AuthRegisterView(APIView):
     permission_classes = [permissions.AllowAny]
+    authentication_classes = []
 
     def post(self, request):
+        logger.info("Registering new user")
+        logger.info(f"Request data: {request.data}")
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
@@ -111,9 +119,10 @@ class AuthRegisterView(APIView):
             return response
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
+@method_decorator(csrf_exempt, name='dispatch')
 class AuthLoginView(APIView):
     permission_classes = [permissions.AllowAny]
+    authentication_classes = []
 
     def post(self, request):
         username = request.data.get('username')

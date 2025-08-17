@@ -11,10 +11,13 @@ interface AuthContextShape {
   ensureUser: ()=>Promise<boolean>; // lazily fetch current user if not already loaded
 }
 
+// The box holding all information about the user and his authentication status
 const AuthContext = createContext<AuthContextShape | undefined>(undefined);
 
 const REFRESH_INTERVAL_MS = 1000 * 60 * 50; // 50 minutes for 60m access lifetime (adjust when Refresh token lifetime differs from 60m)
 
+// The provider component that holds the authentication state and methods
+// Technically the key that allows other members of the application to access the authentication state
 export const AuthProvider: React.FC<{children:React.ReactNode}> = ({children}) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
@@ -59,14 +62,16 @@ export const AuthProvider: React.FC<{children:React.ReactNode}> = ({children}) =
   const login = useCallback(async (username:string, password:string) => {
     const res = await fetch('/api/auth/login/', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username,password}), credentials:'include'});
     if (!res.ok) return false;
-    // login returns set-cookie with tokens, we then fetch me to populate context
+    // login returns set-cookie with tokens, we then run fetchMe to populate context
     await fetchMe();
     scheduleRefresh();
     return true;
   }, [fetchMe, scheduleRefresh]);
 
   const register = useCallback(async (payload:{username:string; email:string; password:string}) => {
+    console.log("Registering user");
     const res = await fetch('/api/auth/register/', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload), credentials:'include'});
+    console.log("Register response", res);
     if (!res.ok) return false;
     await fetchMe();
     scheduleRefresh();
@@ -97,6 +102,7 @@ export const AuthProvider: React.FC<{children:React.ReactNode}> = ({children}) =
   );
 };
 
+// Finally, the hook to access the authentication context
 export function useAuth() {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error('useAuth must be used within AuthProvider');
