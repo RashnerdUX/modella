@@ -1,14 +1,14 @@
 import React from 'react'
-import { StatisticsSection } from './Home/StatsCard';
-import Calendar from '../Calendar';
-import { QuickActions } from './Home/QuickAction';
-import { OufitOfTheDay } from './Home/OufitOfTheDay';
-import { TopBar } from './Home/TopBar';
-import { StoreRecommendations } from './Home/StoreRecommendations';
+import { StatisticsSection } from '../../components/dashboard/Home/StatsCard';
+import Calendar from '../../components/Calendar';
+import { QuickActions } from '../../components/dashboard/Home/QuickAction';
+import { OufitOfTheDay } from '../../components/dashboard/Home/OufitOfTheDay';
+import { TopBar } from '../../components/dashboard/Home/TopBar';
+import { StoreRecommendations } from '../../components/dashboard/Home/StoreRecommendations';
 
 export const DashboardHome = () => {
   return (
-    <div className="bg-white rounded-2xl min-h-screen">
+    <>
         {/* Top of the dashboard */}
         <TopBar />
         {/* Main content */}
@@ -35,7 +35,7 @@ export const DashboardHome = () => {
               <StoreRecommendations />
             </div>
         </div>
-      </div>
+      </>
   )
 }   
 

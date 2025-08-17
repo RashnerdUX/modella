@@ -1,27 +1,40 @@
 import React from 'react'
 import type { IconType } from 'react-icons';
+import { useNavigate, useLocation } from 'react-router';
 import { Icons } from '../../icons';
-import { FaRegSun } from "react-icons/fa";
+import { useAuth } from '~/auth';
+
+const switchPage = (page: string, navigate: (path: string) => void) => {
+  navigate(`/dashboard/${page}`);
+};
 
 export const Menu = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  
   return (
     <div className='flex flex-col space-y-2'>
-        <MenuOption label='Home' icon={Icons.home} onClick={() => {}} selected={true} />
-        <MenuOption label='Wardrobe' icon={Icons.closet} onClick={() => {}} selected={false} />
-        <MenuOption label='Outfits' icon={Icons.outfits} onClick={() => {}} selected={false} />
-        <MenuOption label='Calendar' icon={Icons.calendar} onClick={() => {}} selected={false} />
-        <MenuOption label='Store' icon={Icons.store} onClick={() => {}} selected={false} />
-        <MenuOption label='Profile' icon={Icons.profile} onClick={() => {}} selected={false} />
+        <MenuOption label='Home' icon={Icons.home} onClick={() => navigate('/dashboard')} selected={location.pathname === '/dashboard'} />
+        <MenuOption label='Wardrobe' icon={Icons.closet} onClick={() => switchPage('wardrobe', navigate)} selected={location.pathname === '/dashboard/wardrobe'} />
+        <MenuOption label='Outfits' icon={Icons.outfits} onClick={() => switchPage('outfit', navigate)} selected={location.pathname === '/dashboard/outfit'} />
+        <MenuOption label='Calendar' icon={Icons.calendar} onClick={() => switchPage('calendar', navigate)} selected={location.pathname === '/dashboard/calendar'} />
+        <MenuOption label='Store' icon={Icons.store} onClick={() => switchPage('store', navigate)} selected={location.pathname === '/dashboard/store'} />
+        <MenuOption label='Profile' icon={Icons.profile} onClick={() => switchPage('profile', navigate)} selected={location.pathname === '/dashboard/profile'} />
     </div>
   )
 }
 
 export const MoreOptions = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const { user, logout } = useAuth();
+  
   return (
     <div className='flex flex-col space-y-2'>
-        <MenuOption label='Settings' icon={Icons.settings} onClick={() => {}} selected={false} />
-        <MenuOption label='Help' icon={Icons.help} onClick={() => {}} selected={false} />
-        <MenuOption label='Logout' icon={Icons.logout} onClick={() => {}} selected={false} />
+        <MenuOption label='Settings' icon={Icons.settings} onClick={() => switchPage('settings', navigate)} selected={location.pathname === '/dashboard/settings'} />
+        <MenuOption label='Help' icon={Icons.help} onClick={() => switchPage('help', navigate)} selected={location.pathname === '/dashboard/help'} />
+        <MenuOption label='Logout' icon={Icons.logout} onClick={() => { logout(); navigate('/login'); }} selected={false} />
     </div>
   )
 }

@@ -2,6 +2,8 @@ import React from 'react'
 
 export const Store = () => {
   return (
-    <div>Store</div>
+    <div>Store is opening soon..</div>
   )
 }
+
+export default Store;

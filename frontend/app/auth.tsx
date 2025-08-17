@@ -95,6 +95,23 @@ export const AuthProvider: React.FC<{children:React.ReactNode}> = ({children}) =
     return res;
   }, []);
 
+  // To ensure I don't ship without protected routes in place
+  useEffect(() => {
+    // Auto-mock user in development
+    if (import.meta.env.DEV) {
+      setUser({
+        id: 1,
+        username: "testuser",
+        email: "test@example.com"
+      });
+      setLoading(false);
+      return;
+    }
+
+    // Production: fetch real user
+    fetchMe();
+  }, []);
+
   return (
     <AuthContext.Provider value={{user, loading, login, register, logout, authFetch, ensureUser}}>
       {children}
