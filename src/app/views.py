@@ -22,7 +22,7 @@ from .serializers import (
 )
 from django.contrib.auth.models import User
 from .helpers import get_outfit_recommendation
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework import permissions, status
 from rest_framework.response import Response
 import hmac, hashlib
@@ -194,6 +194,7 @@ def auth_logout(request):
 
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
+@authentication_classes([])
 def auth_me(request):
     return Response({'user': UserSerializer(request.user).data})
 
