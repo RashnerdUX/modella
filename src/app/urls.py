@@ -11,6 +11,8 @@ from .views import (
     GenerateRecommendationView,
     initialize_payment,
     paystack_webhook,
+    GoogleSignInView,
+    FacebookSignInView
 )
 from .views import CookieTokenRefreshView
 
@@ -24,6 +26,8 @@ router.register(r'recommendations', RecommendationViewSet, basename='recommendat
 urlpatterns = [
     path('auth/register/', AuthRegisterView.as_view(), name='auth-register'),
     path('auth/login/', AuthLoginView.as_view(), name='auth-login'),
+    path('auth/social/facebook/', FacebookSignInView.as_view(), name='auth-social-facebook'),
+    path('auth/social/google/', GoogleSignInView.as_view(), name='auth-social-google'),
     path('auth/logout/', auth_logout, name='auth-logout'),
     path('auth/me/', auth_me, name='auth-me'),
     path('auth/refresh/', CookieTokenRefreshView.as_view(), name='token-refresh'),

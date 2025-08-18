@@ -3,6 +3,7 @@ from decouple import config
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.generics import GenericAPIView
 from rest_framework.decorators import action, api_view, permission_classes
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -16,6 +17,8 @@ from .serializers import (
     WardrobeItemSerializer,
     OutfitSerializer,
     RecommendationSerializer,
+    GoogleAuthSerializer,
+    FacebookAuthSerializer,
 )
 from django.contrib.auth.models import User
 from .helpers import get_outfit_recommendation
@@ -138,6 +141,40 @@ class AuthLoginView(APIView):
         response.set_cookie('refresh_token', str(refresh), httponly=True, secure=secure, samesite='Lax')
         return response
 
+# Social Authentication Views
+class GoogleSignInView(GenericAPIView):
+    serializer_class = GoogleAuthSerializer
+    permission_classes = [permissions.AllowAny]
+    authentication_classes = []
+
+    def post(self, request):
+        logger.info("Attempting Google sign-in")
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            data = serializer.validated_data.get('auth_token')
+            logger.info(f"Successfully signed in via Google - {data.get('username')}")
+            return Response(data, status=status.HTTP_200_OK)
+        
+        logger.warning('Failed to authenticate user with Google Sign-in')
+        return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
+
+class FacebookSignInView(GenericAPIView):
+    serializer_class = FacebookAuthSerializer
+    permission_classes = [permissions.AllowAny]
+    authentication_classes = []
+
+    def post(self, request):
+        logger.info("Attempting Facebook sign-in")
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            data = serializer.validated_data.get('auth_token')
+            logger.info(f"Successfully signed in via Facebook - {data.get('username')}")
+            return Response(data, status=status.HTTP_200_OK)
+
+        logger.warning('Failed to authenticate user with Facebook Sign-in')
+        return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])

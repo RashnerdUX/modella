@@ -6,6 +6,7 @@ interface AuthContextShape {
   loading: boolean; // true only while an explicit ensureUser() call is in-flight
   login: (username:string, password:string)=>Promise<boolean>;
   register: (data:{username:string; email:string; password:string})=>Promise<boolean>;
+  socialAuth: (provider: 'facebook' | 'google', accessToken: string)=>Promise<boolean>;
   logout: ()=>Promise<void>;
   authFetch: (input:RequestInfo, init?:RequestInit)=>Promise<Response>;
   ensureUser: ()=>Promise<boolean>; // lazily fetch current user if not already loaded
@@ -78,6 +79,21 @@ export const AuthProvider: React.FC<{children:React.ReactNode}> = ({children}) =
     return true;
   }, [fetchMe, scheduleRefresh]);
 
+  const socialAuth = useCallback(async (provider: 'facebook' | 'google', accessToken: string) => {
+    console.log(`Social auth with ${provider}`);
+    const res = await fetch(`/api/auth/social/${provider}/`, {
+      method: 'POST', 
+      headers: {'Content-Type': 'application/json'}, 
+      body: JSON.stringify({ access_token: accessToken }), 
+      credentials: 'include'
+    });
+    console.log("Social auth response", res);
+    if (!res.ok) return false;
+    await fetchMe();
+    scheduleRefresh();
+    return true;
+  }, [fetchMe, scheduleRefresh]);
+
   const logout = useCallback(async () => {
     await fetch('/api/auth/logout/', {method:'POST', credentials:'include'});
     setUser(null);
@@ -113,7 +129,7 @@ export const AuthProvider: React.FC<{children:React.ReactNode}> = ({children}) =
   }, []);
 
   return (
-    <AuthContext.Provider value={{user, loading, login, register, logout, authFetch, ensureUser}}>
+    <AuthContext.Provider value={{user, loading, login, register, socialAuth, logout, authFetch, ensureUser}}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,6 +1,17 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
+from django.conf import settings
+import logging
+from decouple import config
+
 from .models import WardrobeItem, Outfit, Recommendation
+from .utils import register_for_social
+# Social imports
+from .social_auth.google import validate_google_token
+from .social_auth.facebook import validate_facebook_token
+
+logger = logging.getLogger(__name__)
+GOOGLE_CLIENT_ID = config('GOOGLE_CLIENT_ID', default='your-google-client-id')
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=8)
@@ -40,3 +51,51 @@ class RecommendationSerializer(serializers.ModelSerializer):
         model = Recommendation
         fields = ["id", "items", "text", "occasion", "created_at"]
         read_only_fields = ("id", "user", "created_at")
+
+
+# Social Serializers
+class GoogleAuthSerializer(serializers.Serializer):
+    auth_token = serializers.CharField(min_length=1)
+
+    def validate_auth_token(self, value):
+        user_info = validate_google_token(value)
+        logger.info(f"Here's the info gotten - {user_info}")
+
+        if not user_info:
+            raise serializers.ValidationError('Invalid token')
+        
+        if user_info.get('aud') != GOOGLE_CLIENT_ID:
+            logger.info("User is trying to authorzie with unknown app")
+            raise serializers.ValidationError('Client authorizing the signup is unknown')
+        
+        email = user_info['email']
+        name = user_info['name']
+        provider = settings.AUTH_PROVIDERS.get('google')
+        
+        return register_for_social(
+            email=email,
+            username=name,
+            provider=provider,
+        )
+    
+class FacebookAuthSerializer(serializers.Serializer):
+    auth_token = serializers.CharField(min_length=1)
+
+    def validate_auth_token(self, value):
+        # Debugging to ensure this is working
+        logger.info(f"Validating Facebook token - {value}")
+        user_info = validate_facebook_token(value)
+        logger.info(f"Here's the info gotten - {user_info}")
+
+        if not user_info:
+            raise serializers.ValidationError('Invalid token')
+
+        email = user_info['email']
+        name = user_info['name']
+        provider = settings.AUTH_PROVIDERS.get('facebook')
+
+        return register_for_social(
+            email=email,
+            username=name,
+            provider=provider,
+        )

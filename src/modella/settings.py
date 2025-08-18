@@ -266,6 +266,20 @@ if not DEBUG:
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
 
+# Social authentication
+GOOGLE_CLIENT_ID = config('GOOGLE_CLIENT_ID', default='your-google-client-id')
+GOOGLE_CLIENT_SECRET = config('GOOGLE_CLIENT_SECRET', default='your-google-client-secret')
+FACEBOOK_APP_ID = config('FACEBOOK_APP_ID', default='your-facebook-app-id')
+FACEBOOK_APP_SECRET = config('FACEBOOK_APP_SECRET', default='your-facebook-app-secret')
+
+# Authentication providers
+AUTH_PROVIDERS = {
+    'email': 'email',
+    'google': 'google',
+    'facebook': 'facebook',
+}
+UNIVERSAL_PASSWORD = config('UNIVERSAL_PASSWORD', default='your-universal-password')
+
 # Logging configuration
 LOGGING = {
     'version': 1,

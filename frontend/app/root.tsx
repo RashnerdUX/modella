@@ -6,10 +6,20 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
+import { useEffect } from "react";
 import { AuthProvider } from "./auth";
 
 import type { Route } from "./+types/root";
 import "./app.css";
+
+interface FB {
+  init(config: {
+    appId: string;
+    cookie: boolean;
+    xfbml: boolean;
+    version: string;
+  }): void;
+}
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com"},
@@ -27,6 +37,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body className="bg-[#FAF7F2] text-text-color">
+        <script async defer crossOrigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -36,6 +47,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  useEffect(() => {
+    (window as any).fbAsyncInit = function () {
+      FB.init({
+        appId: "YOUR_APP_ID", // <-- replace with your App ID
+        cookie: true,
+        xfbml: true,
+        version: "v18.0"
+      });
+    };
+  }, []);
   return (
     <AuthProvider>
       <Outlet />

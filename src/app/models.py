@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AbstractBaseUser
 from PIL import Image
 from io import BytesIO
 from django.core.files.base import ContentFile
@@ -8,6 +9,21 @@ import numpy as np
 from storages.backends.s3boto3 import S3Boto3Storage
 
 User = get_user_model()
+
+class CustomUser(AbstractBaseUser): 
+    email = models.EmailField(unique=True)
+    username = models.CharField(max_length=100)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    is_active = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
+    auth_provider = models.CharField(max_length=100, default='email')
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
+
+    def __str__(self):
+        return self.email
 
 class WardrobeItem(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='wardrobe_items')
