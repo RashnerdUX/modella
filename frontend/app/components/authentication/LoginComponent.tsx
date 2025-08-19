@@ -1,5 +1,6 @@
 import React from 'react'
 import {FacebookLogin, GoogleLogin} from './SocialLogin';
+import { Icons } from "../../icons";
 
 interface LoginComponentProps {
   username: string;
@@ -18,6 +19,7 @@ export const LoginComponent: React.FC<LoginComponentProps> = ({
   setPassword,
   submit
 }) => {
+  const [visible, setVisibility] = React.useState(false);
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#FAF7F2]">
       <div className="flex w-2/3 max-w-5xl h-[90vh] rounded-xl shadow-lg bg-white overflow-hidden">
@@ -56,16 +58,27 @@ export const LoginComponent: React.FC<LoginComponentProps> = ({
               value={username}
               onChange={e => setUsername(e.target.value)}
             />
-            <input
-              type="password"
-              className="w-full border rounded px-3 py-2"
+            <div className="flex w-full items-center border rounded">
+              <input
+              type={visible ? "text" : "password"}
+              className="flex-grow px-3 py-2 bg-transparent outline-none"
               placeholder="Password"
               value={password}
               onChange={e => setPassword(e.target.value)}
-            />
+              />
+              <button
+              type="button"
+              onClick={() => setVisibility(v => !v)}
+              className="p-2 text-gray-500 hover:text-gray-700"
+              >
+              {visible ? <Icons.visibility /> : <Icons.hidden />}
+              </button>
+            </div>
             <button className="w-full bg-gray-700 text-white py-2 rounded hover:bg-black">Sign In</button>
-            <p className="text-xs text-center text-gray-500">Don't have an account? <a href="/register" className="text-gray-700 underline hover:text-black">Register here</a></p>
-            <p className="text-xs text-center text-gray-500">Forgot your password? <a href="/forgot-password" className="text-gray-700 underline hover:text-black">Reset here</a></p>
+            <div>
+              <p className="text-xs text-center text-gray-500">Don't have an account? <a href="/register" className="text-gray-700 underline hover:text-black">Register here</a></p>
+              <p className="text-xs text-center text-gray-500">Forgot your password? <a href="/forgot-password" className="text-gray-700 underline hover:text-black">Reset here</a></p>
+            </div>
           </form>
             {/* Divider */}
             <div className='flex items-center justify-center w-full my-2'>
@@ -73,7 +86,7 @@ export const LoginComponent: React.FC<LoginComponentProps> = ({
             </div>
           {/* Social login */}
             <p className='text-gray-400 text-sm'>Login with social accounts</p>
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-2 md:flex-row">
             <FacebookLogin />
             <GoogleLogin />
           </div>

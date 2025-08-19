@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { FacebookLogin, GoogleLogin } from './SocialLogin';
+import { Icons } from '../../icons';
 
 interface RegisterComponentProps {
 	username: string;
@@ -71,6 +72,8 @@ export const RegisterComponent: React.FC<RegisterComponentProps> = ({
 	setConfirmPassword,
 	submit,
 }) => {
+	const [passwordVisible, setPasswordVisible] = React.useState(false);
+	const [confirmPasswordVisible, setConfirmPasswordVisible] = React.useState(false);
 	const strength = useMemo(() => scorePassword(password), [password]);
 	const percent = ((strength.score) / 6) * 100; // 0..100
 
@@ -122,16 +125,25 @@ export const RegisterComponent: React.FC<RegisterComponentProps> = ({
 							autoComplete="email"
 							required
 						/>
-						<input
-							type="password"
-							className="w-full border rounded px-3 py-2"
-							placeholder="Password"
-							value={password}
-							onChange={e => setPassword(e.target.value)}
-							autoComplete="new-password"
-							required
-							minLength={6}
-						/>
+						<div className="flex w-full items-center border rounded">
+							<input
+								type={passwordVisible ? "text" : "password"}
+								className="flex-grow px-3 py-2 bg-transparent outline-none"
+								placeholder="Password"
+								value={password}
+								onChange={e => setPassword(e.target.value)}
+								autoComplete="new-password"
+								required
+								minLength={6}
+							/>
+							<button
+								type="button"
+								onClick={() => setPasswordVisible(v => !v)}
+								className="p-2 text-gray-500 hover:text-gray-700"
+							>
+								{passwordVisible ? <Icons.visibility /> : <Icons.hidden />}
+							</button>
+						</div>
 						{/* Strength Meter */}
 						<div className="space-y-1">
 							<div className="h-2 w-full rounded bg-gray-200 overflow-hidden">
@@ -147,16 +159,25 @@ export const RegisterComponent: React.FC<RegisterComponentProps> = ({
 								)}
 							</p>
 						</div>
-						<input
-							type="password"
-							className="w-full border rounded px-3 py-2"
-							placeholder="Confirm Password"
-							value={confirmPassword}
-							onChange={e => setConfirmPassword(e.target.value)}
-							autoComplete="new-password"
-							required
-							minLength={6}
-						/>
+						<div className="flex w-full items-center border rounded">
+							<input
+								type={confirmPasswordVisible ? "text" : "password"}
+								className="flex-grow px-3 py-2 bg-transparent outline-none"
+								placeholder="Confirm Password"
+								value={confirmPassword}
+								onChange={e => setConfirmPassword(e.target.value)}
+								autoComplete="new-password"
+								required
+								minLength={6}
+							/>
+							<button
+								type="button"
+								onClick={() => setConfirmPasswordVisible(v => !v)}
+								className="p-2 text-gray-500 hover:text-gray-700"
+							>
+								{confirmPasswordVisible ? <Icons.visibility /> : <Icons.hidden />}
+							</button>
+						</div>
 						<button
 							disabled={loading}
 							className="w-full bg-gray-700 text-white py-2 rounded hover:bg-black disabled:opacity-60 disabled:cursor-not-allowed"

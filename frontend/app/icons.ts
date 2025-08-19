@@ -9,6 +9,7 @@ import { IoSettings } from "react-icons/io5";
 import { IoIosHelpCircle } from "react-icons/io";
 import { TbLogout } from "react-icons/tb";
 import { RiScissorsCutFill } from "react-icons/ri";
+import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 
 // Central Icon registry for consistency
 
@@ -40,6 +41,9 @@ export const Icons: Record<string, IconType> = {
     twitter: FiTwitter,
     instagram: FiInstagram,
     linkedin: FiLinkedin,
+    // For password
+    visibility: MdVisibility,
+    hidden: MdVisibilityOff,
 };
 
 // Type for icon names (for autocompletion & validation)
