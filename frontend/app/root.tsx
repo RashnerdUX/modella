@@ -12,6 +12,8 @@ import { AuthProvider } from "./auth";
 import type { Route } from "./+types/root";
 import "./app.css";
 
+const MODELLA_FB_ID = import.meta.env.VITE_FB_APP_ID;
+
 interface FB {
   init(config: {
     appId: string;
@@ -37,7 +39,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body className="bg-[#FAF7F2] text-text-color">
-        <script async defer crossOrigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -49,9 +50,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
   useEffect(() => {
     (window as any).fbAsyncInit = function () {
-      console.log("I")
+      console.log("Initiallizing FB login");
       FB.init({
-        appId: "YOUR_APP_ID", // <-- replace with your App ID
+        appId: MODELLA_FB_ID,
         cookie: true,
         xfbml: true,
         version: "v18.0"
