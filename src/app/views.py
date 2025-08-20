@@ -195,7 +195,6 @@ def auth_logout(request):
 
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
-@authentication_classes([])
 def auth_me(request):
     return Response({'user': UserSerializer(request.user).data})
 
