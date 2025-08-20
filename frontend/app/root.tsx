@@ -49,6 +49,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
   useEffect(() => {
     (window as any).fbAsyncInit = function () {
+      console.log("I")
       FB.init({
         appId: "YOUR_APP_ID", // <-- replace with your App ID
         cookie: true,

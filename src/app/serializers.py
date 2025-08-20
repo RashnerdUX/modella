@@ -7,7 +7,7 @@ from decouple import config
 from .models import WardrobeItem, Outfit, Recommendation
 from .utils import register_for_social
 # Social imports
-from .social_auth.google import validate_google_token
+from .social_auth.google import validate_google_token, exchange_code_for_tokens
 from .social_auth.facebook import validate_facebook_token
 
 logger = logging.getLogger(__name__)
@@ -58,7 +58,11 @@ class GoogleAuthSerializer(serializers.Serializer):
     auth_token = serializers.CharField(min_length=1)
 
     def validate_auth_token(self, value):
-        user_info = validate_google_token(value)
+        # Get the id token from Google API first
+        logger.info(f"Validating Google token - {value}")
+        response = exchange_code_for_tokens(value)
+        logger.info(f"Here's the response gotten - {response}")
+        user_info = validate_google_token(response.get("id_token"))
         logger.info(f"Here's the info gotten - {user_info}")
 
         if not user_info:

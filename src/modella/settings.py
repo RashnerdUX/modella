@@ -269,9 +269,13 @@ if not DEBUG:
 # Social authentication
 GOOGLE_CLIENT_ID = config('GOOGLE_CLIENT_ID', default='your-google-client-id')
 GOOGLE_CLIENT_SECRET = config('GOOGLE_CLIENT_SECRET', default='your-google-client-secret')
+GOOGLE_REDIRECT_URI = config('GOOGLE_REDIRECT_URI', default='your-google-redirect-uri')
+
 FACEBOOK_APP_ID = config('FACEBOOK_APP_ID', default='your-facebook-app-id')
 FACEBOOK_APP_SECRET = config('FACEBOOK_APP_SECRET', default='your-facebook-app-secret')
 
+# Custom Auth User
+AUTH_USER = 'app.CustomUser'
 # Authentication providers
 AUTH_PROVIDERS = {
     'email': 'email',

@@ -190,7 +190,7 @@ export const RegisterComponent: React.FC<RegisterComponentProps> = ({
 						<hr className="w-full my-4" /> <span className='mx-2 uppercase text-gray-400 font-bold text-[10px]'>Or</span> <hr className="w-full my-4" />
 					</div>
 					<p className='text-gray-400 text-sm'>Register with social accounts</p>
-					<div className="flex gap-2">
+					<div className="flex flex-col gap-2 sm:flex-row">
 						<FacebookLogin />
 						<GoogleLogin />
 					</div>

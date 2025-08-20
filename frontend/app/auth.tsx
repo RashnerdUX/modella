@@ -84,7 +84,7 @@ export const AuthProvider: React.FC<{children:React.ReactNode}> = ({children}) =
     const res = await fetch(`/api/auth/social/${provider}/`, {
       method: 'POST', 
       headers: {'Content-Type': 'application/json'}, 
-      body: JSON.stringify({ access_token: accessToken }), 
+      body: JSON.stringify({ auth_token: accessToken }), 
       credentials: 'include'
     });
     console.log("Social auth response", res);
@@ -113,8 +113,9 @@ export const AuthProvider: React.FC<{children:React.ReactNode}> = ({children}) =
 
   // To ensure I don't ship without protected routes in place
   useEffect(() => {
-    // Auto-mock user in development
-    if (import.meta.env.DEV) {
+    // Auto-mock user in development when VITE_MOCK_AUTH is true
+    if (import.meta.env.DEV && import.meta.env.VITE_MOCK_AUTH === 'true') {
+      console.log("Mocking user in development");
       setUser({
         id: 1,
         username: "testuser",
@@ -124,9 +125,10 @@ export const AuthProvider: React.FC<{children:React.ReactNode}> = ({children}) =
       return;
     }
 
-    // Production: fetch real user
+    // Production or development without mocking: fetch real user
+    console.log("Fetching real user");
     fetchMe();
-  }, []);
+  }, [fetchMe]);
 
   return (
     <AuthContext.Provider value={{user, loading, login, register, socialAuth, logout, authFetch, ensureUser}}>
