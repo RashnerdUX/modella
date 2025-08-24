@@ -34,7 +34,7 @@ export const MoreOptions = () => {
     <div className='flex flex-col space-y-2'>
         <MenuOption label='Settings' icon={Icons.settings} onClick={() => switchPage('settings', navigate)} selected={location.pathname === '/dashboard/settings'} />
         <MenuOption label='Help' icon={Icons.help} onClick={() => switchPage('help', navigate)} selected={location.pathname === '/dashboard/help'} />
-        <MenuOption label='Logout' icon={Icons.logout} onClick={() => { logout(); navigate('/login'); }} selected={false} />
+        <MenuOption label='Logout' icon={Icons.logout} onClick={() => { logout(); }} selected={false} />
     </div>
   )
 }
