@@ -1,21 +1,37 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Navigate } from 'react-router';
 import { useAuth } from './auth';
 
-interface Props { children: React.ReactNode; }
+interface Props { 
+  children: React.ReactNode; 
+}
 
 export const ProtectedRoute: React.FC<Props> = ({ children }) => {
   const { user, loading, ensureUser } = useAuth();
+  const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
-    if (!user) {
-      void ensureUser();
-    }
-  }, [user, ensureUser]);
+    const checkAuth = async () => {
+      if (!authChecked) {
+        const isAuthenticated = await ensureUser();
+        setAuthChecked(true);
+        // You could also handle failed auth here if needed
+      }
+    };
+    
+    checkAuth();
+  }, [ensureUser, authChecked]);
 
-  if (loading) return <p className="p-4">Loading...</p>;
-  if (!user && typeof window !== 'undefined') {
-    window.location.href = '/login';
-    return null;
+  // Checking authentication
+  if (!authChecked || loading) {
+    return <p className="p-4">Loading...</p>;
   }
+
+  // Auth check complete - redirect if not authenticated
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  // User is authenticated
   return <>{children}</>;
 };

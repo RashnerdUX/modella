@@ -17,5 +17,4 @@ export default [
     route("settings", "routes/dashboard/settings.tsx"),
     route("help", "routes/dashboard/help.tsx"),
   ]),
-  route("/wardrobe", "routes/wardrobe.tsx"),
 ] satisfies RouteConfig;

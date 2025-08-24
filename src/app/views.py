@@ -105,7 +105,6 @@ class AuthRegisterView(APIView):
 
     def post(self, request):
         logger.info("Registering new user")
-        logger.info(f"Request data: {request.data}")
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
