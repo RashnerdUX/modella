@@ -114,10 +114,19 @@ class AuthRegisterView(APIView):
                 'user': UserSerializer(user).data,
                 'detail': 'Registered successfully'
             }, status=status.HTTP_201_CREATED)
+            
+            is_localhost = request.get_host().startswith('localhost')
+            if is_localhost:
+                logger.info("Setting cookies for localhost")
+                secure = False
+                samesite = 'Lax'
+            else:
+                logger.info("Setting cookies for production")
+                secure = True
+                samesite = 'None'
             # Set cookies (HttpOnly)
-            secure = not request.get_host().startswith('localhost')
-            response.set_cookie('access_token', access_token, httponly=True, secure=secure, samesite='Lax')
-            response.set_cookie('refresh_token', str(refresh), httponly=True, secure=secure, samesite='Lax')
+            response.set_cookie('access_token', access_token, httponly=True, secure=secure, samesite=samesite)
+            response.set_cookie('refresh_token', str(refresh), httponly=True, secure=secure, samesite=samesite)
             return response
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -135,9 +144,18 @@ class AuthLoginView(APIView):
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
         response = Response({'user': UserSerializer(user).data, 'detail': 'Login successful'})
-        secure = not request.get_host().startswith('localhost')
-        response.set_cookie('access_token', access_token, httponly=True, secure=secure, samesite='Lax')
-        response.set_cookie('refresh_token', str(refresh), httponly=True, secure=secure, samesite='Lax')
+
+        is_localhost = request.get_host().startswith('localhost')
+        if is_localhost:
+            logger.info("Setting cookies for localhost")
+            secure = False
+            samesite = 'Lax'
+        else:
+            logger.info("Setting cookies for production")
+            secure = True
+            samesite = 'None'
+        response.set_cookie('access_token', access_token, httponly=True, secure=secure, samesite=samesite)
+        response.set_cookie('refresh_token', str(refresh), httponly=True, secure=secure, samesite=samesite)
         return response
 
 # Social Authentication Views

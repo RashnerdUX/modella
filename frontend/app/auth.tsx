@@ -64,18 +64,9 @@ export const AuthProvider: React.FC<{children:React.ReactNode}> = ({children}) =
   }, [user, loading, fetchMe, scheduleRefresh]);
 
   const login = useCallback(async (username:string, password:string) => {
-    console.log("Cookies before login:", document.cookie);
     try {
-      const response = await apiClient.post('/api/auth/login/', { username, password });
-      console.log("Login response status:", response.status);
-      console.log("Response headers:", response.headers);
-      
-      // Check if Set-Cookie headers were sent
-      const setCookieHeaders = response.headers['set-cookie'];
-      console.log("Set-Cookie headers:", setCookieHeaders);
-      
-      console.log("Cookies after login:", document.cookie);
-      
+      await apiClient.post('/api/auth/login/', { username, password });
+
       // login returns set-cookie with tokens, we then run fetchMe to populate context
       await fetchMe();
       scheduleRefresh();
